@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Teema — Nigerian Food & Snacks Marketplace</title>
+	<link rel="stylesheet" href="styles.css?v=11">
+	<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Poppins:wght@300;400;500;600&display=swap"
+		rel="stylesheet">
+</head>
+
+
+<body>
+	<!-- Skip link -->
+	<a class="skip-link" href="#main">Skip to content</a>
+
+	<header class="navbar" role="banner">
+		<a class="logo-link" href="index.html" aria-hidden="true">
+			<img src="assets/logo2.png" alt="Teema" class="site-logo">
+		</a>
+
+		<div class="nav-right">
+			<nav id="main-nav" aria-label="Primary navigation">
+				<a href="#">Home</a>
+				<a href="products.html">Shop</a>
+				<a href="#categories">Categories</a>
+				<a href="#about">About</a>
+				<a href="#contact">Contact</a>
+			</nav>
+
+			<div class="controls">
+				<button class="menu-toggle" aria-label="Toggle navigation" aria-controls="main-nav"
+					aria-expanded="false">☰</button>
+				<!-- Cart toggle (global) -->
+				<button class="cart-toggle" aria-label="Open cart" aria-controls="cart-modal" aria-expanded="false">
+					<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+						stroke-linecap="round" stroke-linejoin="round">
+						<circle cx="9" cy="21" r="1"></circle>
+						<circle cx="20" cy="21" r="1"></circle>
+						<path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+					</svg>
+					<span class="cart-badge" aria-hidden="true">0</span>
+				</button>
+			</div>
+		</div>
+	</header>
+	<!-- Toast container -->
+	<div id="toast" class="toast" aria-live="polite" hidden></div>
+	<main id="main">
+
+		<section class="hero fade-in">
+			<div class="hero-content container">
+				<div class="hero-text">
+					<h3>Authentic Nigerian Food & Snacks</h3>
+					<h1>Fresh. Fast. Delivered.</h1>
+					<p>Teema connects you to the best Nigerian meals, staples and snacks — delivered to your door.</p>
+					<button class="cta">SHOP NOW</button>
+				</div>
+
+				<div class="hero-image">
+					<img src="https://images.unsplash.com/photo-1604908176997-125f25cc6f3d"
+						alt="Assorted Nigerian meals on a table">
+				</div>
+			</div>
+		</section>
+
+		<section class="features fade-in container">
+			<div>🚚 Fast Delivery</div>
+			<div>🌶 Authentic Flavours</div>
+			<div>🛒 Wide Selection</div>
+			<div>✅ Fresh & Hygienic</div>
+		</section>
+
+		<section class="chef fade-in container" id="products">
+			<h2>Products</h2>
+
+			<div class="food-grid home-food-grid">
+				<!-- Product cards (Trimmed for Home Page) -->
+				<div class="food-card red" data-id="rice" data-name="Rice" data-price="4500">
+					<img loading="lazy" src="https://images.unsplash.com/photo-1562967914-6082f9bfb5b8" alt="Rice">
+					<p>Rice</p>
+					<div class="price">₦4,500</div>
+					<button class="add-to-cart" aria-label="Add Rice to cart">Add to cart</button>
+				</div>
+				<div class="food-card orange" data-id="beans" data-name="Beans" data-price="2500">
+					<img loading="lazy" src="https://images.unsplash.com/photo-1589307000243-33d1f9d0d6a7" alt="Beans">
+					<p>Beans</p>
+					<div class="price">₦2,500</div>
+					<button class="add-to-cart" aria-label="Add Beans to cart">Add to cart</button>
+				</div>
+				<div class="food-card yellow" data-id="yam" data-name="Yam" data-price="3000">
+					<img loading="lazy" src="https://images.unsplash.com/photo-1547516508-4f4f1a30f421" alt="Yam">
+					<p>Yam</p>
+					<div class="price">₦3,000</div>
+					<button class="add-to-cart" aria-label="Add Yam to cart">Add to cart</button>
+				</div>
+				<div class="food-card brown" data-id="pepper" data-name="Pepper" data-price="1200">
+					<img loading="lazy" src="https://images.unsplash.com/photo-1544025162-d76694265947" alt="Pepper">
+					<p>Pepper</p>
+					<div class="price">₦1,200</div>
+					<button class="add-to-cart" aria-label="Add Pepper to cart">Add to cart</button>
+				</div>
+			</div>
+
+			<div style="margin-top: 40px; text-align: center;">
+				<a href="products.html" class="btn"
+					style="display: inline-block; text-decoration: none; font-size: 18px; padding: 14px 40px; border-radius: 999px;">Keep
+					Shopping</a>
+			</div>
+
+			</div>
+
+		</section>
+
+		<section class="combos fade-in container" id="categories">
+			<h2>Popular Combos</h2>
+			<div class="combo-grid">
+				<div class="combo-card"
+					style="background-image: linear-gradient(rgba(15,23,42,0.4), rgba(15,23,42,0.8)), url('https://images.unsplash.com/photo-1544025162-6a23a2b30c3e');">
+					<div class="combo-content">
+						<h3>Rice + Beef</h3>
+						<p>Classic combo. Savory and filling.</p>
+						<button class="btn btn-ghost" style="color:#fff; border-color:rgba(255,255,255,0.3)">Add
+							Combo</button>
+					</div>
+				</div>
+				<div class="combo-card"
+					style="background-image: linear-gradient(rgba(15,23,42,0.4), rgba(15,23,42,0.8)), url('https://images.unsplash.com/photo-1589307000243-33d1f9d0d6a7');">
+					<div class="combo-content">
+						<h3>Yam + Goat meat</h3>
+						<p>Rich, local flavor.</p>
+						<button class="btn btn-ghost" style="color:#fff; border-color:rgba(255,255,255,0.3)">Add
+							Combo</button>
+					</div>
+				</div>
+				<div class="combo-card"
+					style="background-image: linear-gradient(rgba(15,23,42,0.4), rgba(15,23,42,0.8)), url('https://images.unsplash.com/photo-1561063878-6b9d2b8b2e26');">
+					<div class="combo-content">
+						<h3>Plantain + Gizzard</h3>
+						<p>Sweet and spicy perfection.</p>
+						<button class="btn btn-ghost" style="color:#fff; border-color:rgba(255,255,255,0.3)">Add
+							Combo</button>
+					</div>
+				</div>
+			</div>
+		</section>
+
+		<section class="quote fade-in container" id="about">
+			<div class="quote-box">
+				<p>Teema brings authentic Nigerian meals and groceries to your doorstep — wherever you are.</p>
+				<span>— Teema Team</span>
+			</div>
+		</section>
+
+		<section class="combos fade-in container" id="contact">
+			<h2>Contact</h2>
+			<p>Email: hello@teema.example | Phone: +234 800 000 0000</p>
+		</section>
+
+	</main>
+
+	<footer class="site-footer">
+		<div class="container">© 2026 Teema — Nigerian Food & Snacks Marketplace</div>
+	</footer>
+
+	<!-- CTA Modal (hidden by default) -->
+	<div id="cta-modal" class="modal" role="dialog" aria-modal="true" aria-hidden="true" aria-labelledby="modal-title">
+		<div class="modal-inner">
+			<button class="modal-close" aria-label="Close modal">✕</button>
+			<h2 id="modal-title">Welcome to Teema</h2>
+			<p>Browse our products and choose from a wide selection of Nigerian staples and snacks.</p>
+			<div class="modal-actions">
+				<button id="modal-view-combos" class="btn">View Products</button>
+				<button id="modal-close-secondary" class="btn btn-ghost">Maybe later</button>
+			</div>
+		</div>
+		<div class="modal-backdrop" tabindex="-1" data-close="backdrop"></div>
+	</div>
+
+	<!-- Cart Modal -->
+	<div id="cart-modal" class="modal" role="dialog" aria-modal="true" aria-hidden="true" aria-labelledby="cart-title">
+		<div class="modal-inner">
+			<button class="modal-close cart-close" aria-label="Close cart">✕</button>
+			<h2 id="cart-title">Your Cart</h2>
+			<div class="cart-list" aria-live="polite"></div>
+			<div class="cart-footer">
+				<div class="cart-summary">Total: <strong class="cart-total">₦0</strong></div>
+				<div class="cart-actions">
+					<button id="checkout-btn" class="btn">Checkout</button>
+					<button class="btn btn-ghost cart-close">Continue shopping</button>
+				</div>
+			</div>
+		</div>
+		<div class="modal-backdrop" tabindex="-1" data-close="cart-backdrop"></div>
+	</div>
+
+	<!-- Success Modal -->
+	<div id="success-modal" class="modal" role="dialog" aria-modal="true" aria-hidden="true"
+		aria-labelledby="success-title">
+		<div class="modal-inner" style="text-align: center; padding: 40px 20px;">
+			<div style="font-size: 64px; margin-bottom: 20px; animation: float 3s ease-in-out infinite;">🎉</div>
+			<h2 id="success-title">Order Successful!</h2>
+			<p>Your authentic Nigerian food is on its way to you.</p>
+			<div class="modal-actions" style="justify-content: center; margin-top: 24px;">
+				<button class="btn success-close" style="padding: 12px 32px;">Awesome</button>
+			</div>
+		</div>
+		<div class="modal-backdrop" tabindex="-1" data-close="success-backdrop"></div>
+	</div>
+
+	<script src="script.js?v=5"></script>
+
+</body>
+
+</html>

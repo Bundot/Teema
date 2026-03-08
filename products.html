@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Products — Teema</title>
+  <link rel="stylesheet" href="styles.css?v=11">
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Poppins:wght@300;400;500;600&display=swap"
+    rel="stylesheet">
+</head>
+
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+  <header class="navbar" role="banner">
+    <a class="logo-link" href="index.html" aria-hidden="true">
+      <img src="assets/logo2.png" alt="Teema" class="site-logo">
+    </a>
+
+    <div class="nav-right">
+      <nav id="main-nav" aria-label="Primary navigation">
+        <a href="index.html">Home</a>
+        <a href="#products">Shop</a>
+        <a href="#categories">Categories</a>
+        <a href="#about">About</a>
+        <a href="#contact">Contact</a>
+      </nav>
+
+      <div class="controls">
+        <button class="menu-toggle" aria-label="Toggle navigation" aria-controls="main-nav"
+          aria-expanded="false">☰</button>
+        <button class="cart-toggle" aria-label="Open cart" aria-controls="cart-modal" aria-expanded="false">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+            stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="9" cy="21" r="1"></circle>
+            <circle cx="20" cy="21" r="1"></circle>
+            <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+          </svg>
+          <span class="cart-badge" aria-hidden="true">0</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main id="main">
+    <!-- <div class="page-header"
+      style="background: linear-gradient(135deg, rgba(245,158,11,0.1) 0%, rgba(228,87,46,0.1) 100%); padding: 120px 20px 80px 20px; text-align: center; border-bottom: 1px solid rgba(0,0,0,0.05); margin-bottom: 40px;">
+      <h1 style="font-size: clamp(36px, 6vw, 64px); color: #0f172a; margin-bottom: 16px;">Our Menu</h1>
+      <p style="font-size: 18px; color: #64748b; max-width: 600px; margin: 0 auto; font-family: 'Poppins', sans-serif;">
+        Discover our full range of authentic Nigerian meals, fresh ingredients, and signature snacks.</p>
+    </div> -->
+
+    <section class="chef fade-in container" id="products">
+      <!-- Toast container -->
+      <div id="toast" class="toast" aria-live="polite" hidden></div>
+      <div class="food-grid">
+        <!-- Each product needs data-id, data-name, data-price and an add button -->
+
+        <!-- I'll list all products with sample prices -->
+        <div class="food-card red" data-id="rice" data-name="Rice" data-price="4500">
+          <img loading="lazy" src="https://images.unsplash.com/photo-1562967914-6082f9bfb5b8" alt="Rice">
+          <p>Rice</p>
+          <div class="price">₦4,500</div>
+          <button class="add-to-cart" aria-label="Add Rice to cart">Add to cart</button>
+        </div>
+
+        <div class="food-card orange" data-id="beans" data-name="Beans" data-price="2500">
+          <img loading="lazy" src="https://images.unsplash.com/photo-1589307000243-33d1f9d0d6a7" alt="Beans">
+          <p>Beans</p>
+          <div class="price">₦2,500</div>
+          <button class="add-to-cart" aria-label="Add Beans to cart">Add to cart</button>
+        </div>
+
+        <div class="food-card yellow" data-id="yam" data-name="Yam" data-price="3000">
+          <img loading="lazy" src="https://images.unsplash.com/photo-1547516508-4f4f1a30f421" alt="Yam">
+          <p>Yam</p>
+          <div class="price">₦3,000</div>
+          <button class="add-to-cart" aria-label="Add Yam to cart">Add to cart</button>
+        </div>
+
+        <div class="food-card brown" data-id="pepper" data-name="Pepper" data-price="1200">
+          <img loading="lazy" src="https://images.unsplash.com/photo-1544025162-d76694265947" alt="Pepper">
+          <p>Pepper</p>
+          <div class="price">₦1,200</div>
+          <button class="add-to-cart" aria-label="Add Pepper to cart">Add to cart</button>
+        </div>
+
+        <div class="food-card purple" data-id="crayfish" data-name="Cray fish" data-price="1500">
+          <img src="https://images.unsplash.com/photo-1592928300890-2d3e5d8f9c15" alt="Cray fish">
+          <p>Cray fish</p>
+          <div class="price">₦1,500</div>
+          <button class="add-to-cart">Add to cart</button>
+        </div>
+
+        <div class="food-card blue" data-id="seasoning" data-name="Seasoning" data-price="800">
+          <img src="https://images.unsplash.com/photo-1512621776951-a57141f2eefd" alt="Seasoning">
+          <p>Seasoning</p>
+          <div class="price">₦800</div>
+          <button class="add-to-cart">Add to cart</button>
+        </div>
+
+        <div class="food-card green" data-id="frozen-turkey" data-name="Frozen Turkey" data-price="25000">
+          <img src="https://images.unsplash.com/photo-1544025162-6a23a2b30c3e" alt="Frozen Turkey">
+          <p>Frozen Turkey</p>
+          <div class="price">₦25,000</div>
+          <button class="add-to-cart">Add to cart</button>
+        </div>
+
+        <div class="food-card dark" data-id="frozen-chicken" data-name="Frozen Chicken" data-price="8000">
+          <img src="https://images.unsplash.com/photo-1544025162-3f2c4b4f8c81" alt="Frozen Chicken">
+          <p>Frozen Chicken</p>
+          <div class="price">₦8,000</div>
+          <button class="add-to-cart">Add to cart</button>
+        </div>
+
+        <!-- Continue listing remaining items (abbreviated images reused for placeholders) -->
+        <div class="food-card red" data-id="frozen-catfish" data-name="Frozen catfish" data-price="6000"><img
+            src="https://images.unsplash.com/photo-1604866794958-9b0dcd31b3f5" alt="Frozen catfish">
+          <p>Frozen catfish</p>
+          <div class="price">₦6,000</div><button class="add-to-cart">Add to cart</button>
+        </div>
+        <div class="food-card orange" data-id="hake" data-name="Hake fish" data-price="4200"><img
+            src="https://images.unsplash.com/photo-1514515080736-1b9c0f6b6e3a" alt="Hake">
+          <p>Hake fish</p>
+          <div class="price">₦4,200</div><button class="add-to-cart">Add to cart</button>
+        </div>
+        <div class="food-card yellow" data-id="mackerel" data-name="Mackerel" data-price="1800"><img
+            src="https://images.unsplash.com/photo-1528731708534-816fe59f90d4" alt="Mackerel">
+          <p>Mackerel</p>
+          <div class="price">₦1,800</div><button class="add-to-cart">Add to cart</button>
+        </div>
+        <div class="food-card brown" data-id="maltina" data-name="Maltina" data-price="600"><img
+            src="https://images.unsplash.com/photo-1604503468689-3f50be2b0a36" alt="Maltina">
+          <p>Maltina</p>
+          <div class="price">₦600</div><button class="add-to-cart">Add to cart</button>
+        </div>
+
+        <div class="food-card purple" data-id="lacasera" data-name="Lacasera" data-price="600"><img
+            src="https://images.unsplash.com/photo-1541534401786-1d38ff5f83a7" alt="Lacasera">
+          <p>Lacasera</p>
+          <div class="price">₦600</div><button class="add-to-cart">Add to cart</button>
+        </div>
+        <div class="food-card blue" data-id="fayrouz" data-name="Fayrouz" data-price="800"><img
+            src="https://images.unsplash.com/photo-1582719478171-2f1f0b78b2b8" alt="Fayrouz">
+          <p>Fayrouz</p>
+          <div class="price">₦800</div><button class="add-to-cart">Add to cart</button>
+        </div>
+        <div class="food-card green" data-id="wine" data-name="Wine" data-price="8000"><img
+            src="https://images.unsplash.com/photo-1565802606502-9aa6a3cfc5e6" alt="Wine">
+          <p>Wine</p>
+          <div class="price">₦8,000</div><button class="add-to-cart">Add to cart</button>
+        </div>
+        <div class="food-card dark" data-id="turkey-gizzard" data-name="Turkey gizzard" data-price="1200"><img
+            src="https://images.unsplash.com/photo-1541696432-82c6da8ce7bf" alt="Turkey gizzard">
+          <p>Turkey gizzard</p>
+          <div class="price">₦1,200</div><button class="add-to-cart">Add to cart</button>
+        </div>
+
+        <div class="food-card red" data-id="chicken-gizzard" data-name="Chicken gizzard" data-price="900"><img
+            src="https://images.unsplash.com/photo-1604908176997-125f25cc6f3d" alt="Chicken gizzard">
+          <p>Chicken gizzard</p>
+          <div class="price">₦900</div><button class="add-to-cart">Add to cart</button>
+        </div>
+        <div class="food-card orange" data-id="plantain" data-name="Plantain" data-price="500"><img
+            src="https://images.unsplash.com/photo-1561063878-6b9d2b8b2e26" alt="Plantain">
+          <p>Plantain</p>
+          <div class="price">₦500</div><button class="add-to-cart">Add to cart</button>
+        </div>
+        <div class="food-card yellow" data-id="vegetable" data-name="Vegetable" data-price="700"><img
+            src="https://images.unsplash.com/photo-1495195134817-aeb325a55b65" alt="Vegetable">
+          <p>Vegetable</p>
+          <div class="price">₦700</div><button class="add-to-cart">Add to cart</button>
+        </div>
+        <div class="food-card brown" data-id="iru" data-name="Iru" data-price="600"><img
+            src="https://images.unsplash.com/photo-1604908176997-125f25cc6f3d" alt="Iru">
+          <p>Iru</p>
+          <div class="price">₦600</div><button class="add-to-cart">Add to cart</button>
+        </div>
+
+        <div class="food-card purple" data-id="kpomo" data-name="Kpomo" data-price="1500"><img
+            src="https://images.unsplash.com/photo-1585238342029-7a7a0b01b3f8" alt="Kpomo">
+          <p>Kpomo</p>
+          <div class="price">₦1,500</div><button class="add-to-cart">Add to cart</button>
+        </div>
+        <div class="food-card blue" data-id="stockfish" data-name="Stock fish" data-price="3200"><img
+            src="https://images.unsplash.com/photo-1565895405227-5b54a1e0b3d3" alt="Stock fish">
+          <p>Stock fish</p>
+          <div class="price">₦3,200</div><button class="add-to-cart">Add to cart</button>
+        </div>
+        <div class="food-card green" data-id="custard" data-name="Custard" data-price="700"><img
+            src="https://images.unsplash.com/photo-1585238342029-7a7a0b01b3f8" alt="Custard">
+          <p>Custard</p>
+          <div class="price">₦700</div><button class="add-to-cart">Add to cart</button>
+        </div>
+        <div class="food-card dark" data-id="milo" data-name="Milo" data-price="900"><img
+            src="https://images.unsplash.com/photo-1564758866819-1c9d7a0f9b0a" alt="Milo">
+          <p>Milo</p>
+          <div class="price">₦900</div><button class="add-to-cart">Add to cart</button>
+        </div>
+
+        <div class="food-card red" data-id="peak-milk" data-name="Peak milk" data-price="850"><img
+            src="https://images.unsplash.com/photo-1568605114967-8130f3a36994" alt="Peak milk">
+          <p>Peak milk</p>
+          <div class="price">₦850</div><button class="add-to-cart">Add to cart</button>
+        </div>
+        <div class="food-card orange" data-id="bournvita" data-name="Bournvita" data-price="900"><img
+            src="https://images.unsplash.com/photo-1580910051073-6a07b12d9b38" alt="Bournvita">
+          <p>Bournvita</p>
+          <div class="price">₦900</div><button class="add-to-cart">Add to cart</button>
+        </div>
+        <div class="food-card yellow" data-id="garri" data-name="Garri" data-price="600"><img
+            src="https://images.unsplash.com/photo-1582719478171-2f1f0b78b2b8" alt="Garri">
+          <p>Garri</p>
+          <div class="price">₦600</div><button class="add-to-cart">Add to cart</button>
+        </div>
+        <div class="food-card brown" data-id="poundo-yam" data-name="Poundo yam" data-price="1200"><img
+            src="https://images.unsplash.com/photo-1600891964599-f61ba0e24092" alt="Poundo yam">
+          <p>Poundo yam</p>
+          <div class="price">₦1,200</div><button class="add-to-cart">Add to cart</button>
+        </div>
+
+        <div class="food-card purple" data-id="semovita" data-name="Semovita" data-price="700"><img
+            src="https://images.unsplash.com/photo-1532634896-26909d0d9b88" alt="Semovita">
+          <p>Semovita</p>
+          <div class="price">₦700</div><button class="add-to-cart">Add to cart</button>
+        </div>
+        <div class="food-card blue" data-id="wheat" data-name="Wheat" data-price="400"><img
+            src="https://images.unsplash.com/photo-1582719478171-2f1f0b78b2b8" alt="Wheat">
+          <p>Wheat</p>
+          <div class="price">₦400</div><button class="add-to-cart">Add to cart</button>
+        </div>
+        <div class="food-card green" data-id="amala" data-name="Amala" data-price="600"><img
+            src="https://images.unsplash.com/photo-1544025162-6a23a2b30c3e" alt="Amala">
+          <p>Amala</p>
+          <div class="price">₦600</div><button class="add-to-cart">Add to cart</button>
+        </div>
+        <div class="food-card dark" data-id="cassava-flour" data-name="Cassava flour" data-price="500"><img
+            src="https://images.unsplash.com/photo-1544025162-3f2c4b4f8c81" alt="Cassava flour">
+          <p>Cassava flour</p>
+          <div class="price">₦500</div><button class="add-to-cart">Add to cart</button>
+        </div>
+
+        <div class="food-card red" data-id="fufu" data-name="Fufu" data-price="700"><img
+            src="https://images.unsplash.com/photo-1544025162-3f2c4b4f8c81" alt="Fufu">
+          <p>Fufu</p>
+          <div class="price">₦700</div><button class="add-to-cart">Add to cart</button>
+        </div>
+        <div class="food-card orange" data-id="goat-meat" data-name="Goat meat" data-price="11000"><img
+            src="https://images.unsplash.com/photo-1604908176997-125f25cc6f3d" alt="Goat meat">
+          <p>Goat meat</p>
+          <div class="price">₦11,000</div><button class="add-to-cart">Add to cart</button>
+        </div>
+        <div class="food-card yellow" data-id="beef" data-name="Beef" data-price="9000"><img
+            src="https://images.unsplash.com/photo-1544025162-6a23a2b30c3e" alt="Beef">
+          <p>Beef</p>
+          <div class="price">₦9,000</div><button class="add-to-cart">Add to cart</button>
+        </div>
+
+      </div>
+    </section>
+
+    <section class="combos fade-in container" id="categories">
+      <h2>Popular Combos</h2>
+      <div class="combo-grid">
+        <div class="combo-card"
+          style="background-image: linear-gradient(rgba(15,23,42,0.4), rgba(15,23,42,0.8)), url('https://images.unsplash.com/photo-1544025162-6a23a2b30c3e');">
+          <div class="combo-content">
+            <h3>Rice + Beef</h3>
+            <p>Classic combo. Savory and filling.</p>
+            <button class="btn btn-ghost" style="color:#fff; border-color:rgba(255,255,255,0.3)">Add Combo</button>
+          </div>
+        </div>
+        <div class="combo-card"
+          style="background-image: linear-gradient(rgba(15,23,42,0.4), rgba(15,23,42,0.8)), url('https://images.unsplash.com/photo-1589307000243-33d1f9d0d6a7');">
+          <div class="combo-content">
+            <h3>Yam + Goat meat</h3>
+            <p>Rich, local flavor.</p>
+            <button class="btn btn-ghost" style="color:#fff; border-color:rgba(255,255,255,0.3)">Add Combo</button>
+          </div>
+        </div>
+        <div class="combo-card"
+          style="background-image: linear-gradient(rgba(15,23,42,0.4), rgba(15,23,42,0.8)), url('https://images.unsplash.com/photo-1561063878-6b9d2b8b2e26');">
+          <div class="combo-content">
+            <h3>Plantain + Gizzard</h3>
+            <p>Sweet and spicy perfection.</p>
+            <button class="btn btn-ghost" style="color:#fff; border-color:rgba(255,255,255,0.3)">Add Combo</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="quote fade-in container" id="about">
+      <div class="quote-box">
+        <p>Teema brings authentic Nigerian meals and groceries to your doorstep — wherever you are.</p>
+        <span>— Teema Team</span>
+      </div>
+    </section>
+
+    <section class="combos fade-in container" id="contact">
+      <h2>Contact</h2>
+      <p>Email: hello@teema.example | Phone: +234 800 000 0000</p>
+    </section>
+
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">© 2026 Teema — Nigerian Food & Snacks Marketplace</div>
+  </footer>
+
+  <!-- Cart Modal -->
+  <div id="cart-modal" class="modal" role="dialog" aria-modal="true" aria-hidden="true" aria-labelledby="cart-title">
+    <div class="modal-inner">
+      <button class="modal-close cart-close" aria-label="Close cart">✕</button>
+      <h2 id="cart-title">Your Cart</h2>
+      <div class="cart-list" aria-live="polite"></div>
+      <div class="cart-footer">
+        <div class="cart-summary">Total: <strong class="cart-total">₦0</strong></div>
+        <div class="cart-actions">
+          <button id="checkout-btn" class="btn">Checkout</button>
+          <button class="btn btn-ghost cart-close">Continue shopping</button>
+        </div>
+      </div>
+    </div>
+    <div class="modal-backdrop" tabindex="-1" data-close="cart-backdrop"></div>
+  </div>
+
+  <!-- Success Modal -->
+  <div id="success-modal" class="modal" role="dialog" aria-modal="true" aria-hidden="true"
+    aria-labelledby="success-title">
+    <div class="modal-inner" style="text-align: center; padding: 40px 20px;">
+      <div style="font-size: 64px; margin-bottom: 20px; animation: float 3s ease-in-out infinite;">🎉</div>
+      <h2 id="success-title">Order Successful!</h2>
+      <p>Your authentic Nigerian food is on its way to you.</p>
+      <div class="modal-actions" style="justify-content: center; margin-top: 24px;">
+        <button class="btn success-close" style="padding: 12px 32px;">Awesome</button>
+      </div>
+    </div>
+    <div class="modal-backdrop" tabindex="-1" data-close="success-backdrop"></div>
+  </div>
+
+  <script src="script.js?v=5"></script>
+</body>
+
+</html>
