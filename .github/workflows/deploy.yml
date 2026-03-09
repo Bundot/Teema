@@ -1,0 +1,35 @@
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    name: Prepare pages artifact
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # If you have a build step (npm, hugo, eleventy, etc.) run it here and
+      # change the `path` in the upload step to the build output directory.
+
+      - name: Upload artifact for GitHub Pages
+        uses: actions/upload-pages-artifact@v1
+        with:
+          path: './'
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    name: Deploy to GitHub Pages
+    steps:
+      - name: Deploy
+        uses: actions/deploy-pages@v1
