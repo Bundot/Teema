@@ -57,12 +57,12 @@
       <div class="grid">
         <div class="panel-col">
           <form id="product-form" class="form-panel" onsubmit="return false;">
-            <label>Product ID <input id="p-id" type="text" name="id" placeholder="e.g. rice" /></label>
+            <label>Product ID <input id="p-id" type="text" name="id" placeholder="Auto-generated UUID" readonly style="background:#f8fafc;color:#64748b;cursor:not-allowed;" /></label>
             <label>Name <input id="p-name" type="text" name="name" placeholder="Product name" /></label>
             <label>Price (₦) <input id="p-price" type="number" name="price" placeholder="e.g. 4500" /></label>
             <label>Image URL <input id="p-image" type="text" name="image" placeholder="assets/products/rice.jpeg" /></label>
             <label>Or upload image <input id="p-image-file" type="file" accept="image/*" /></label>
-            <label>SKU <input id="p-sku" type="text" name="sku" placeholder="TEEMA-RICE" /></label>
+            <label>SKU <input id="p-sku" type="text" name="sku" placeholder="Auto-generated from name" readonly style="background:#f8fafc;color:#64748b;cursor:not-allowed;" /></label>
             <div class="form-actions">
               <button id="add-product" type="button" class="btn btn-primary">Add product</button>
               <button id="update-product" type="button" class="btn">Update selected</button>
@@ -103,7 +103,7 @@
       <div class="grid">
         <div class="panel-col">
           <form id="combo-form" class="form-panel" onsubmit="return false;">
-            <label>Combo ID <input id="c-id" type="text" name="id" placeholder="e.g. rice-beef" /></label>
+            <label>Combo ID <input id="c-id" type="text" name="id" placeholder="Auto-generated UUID" readonly style="background:#f8fafc;color:#64748b;cursor:not-allowed;" /></label>
             <label>Title <input id="c-title" type="text" name="title" placeholder="Rice + Beef" /></label>
             <label>Description <input id="c-desc" type="text" name="description" placeholder="Short description" /></label>
             <label>Image URL <input id="c-image" type="text" name="image" placeholder="assets/banner.jpg" /></label>
@@ -336,29 +336,30 @@
       console.log('🖱️ === ADD PRODUCT BUTTON CLICKED ===');
       console.log('📋 Form Data Collection Start...');
       
-      const id = String(formP.id.value || '').trim(); 
+      // Generate auto-generated fields
+      const id = generateUUID();
       const name = String(formP.name.value || '').trim(); 
       const price = Number(formP.price.value || 0); 
       let image = String(formP.image.value || '').trim(); 
-      let sku = String(formP.sku.value || '').trim();
+      const sku = generateSkuFromName(name);
       
       console.log('📝 Form Values:');
-      console.log('   ID:', id || '(empty)');
+      console.log('   ID (auto-generated):', id);
       console.log('   Name:', name || '(empty)');
       console.log('   Price:', price);
       console.log('   Image:', image || '(empty)');
-      console.log('   SKU:', sku || '(empty)');
+      console.log('   SKU (auto-generated):', sku);
       
-      if (!id || !name) { 
-        console.log('❌ Validation Failed: Missing ID or name');
-        showToast('Provide ID and name'); 
+      if (!name) { 
+        console.log('❌ Validation Failed: Missing name');
+        showToast('Please provide product name'); 
         return; 
       }
       
-      if (products.find(p => p.id === id)) { 
-        console.log('❌ Validation Failed: ID already exists:', id);
-        showToast('ID exists — use update'); 
-        return; 
+      if (price <= 0) {
+        console.log('❌ Validation Failed: Invalid price');
+        showToast('Please provide a valid price'); 
+        return;
       }
       
       console.log('✅ Form validation passed');
@@ -378,18 +379,13 @@
         }
       }
       
-      if (!sku) {
-        sku = generateSku(id, name);
-        console.log('🏷️ Generated SKU:', sku);
-      }
-      
       // Fix: Use correct field names for database
       const item = { 
-        id: id,           // Frontend id (becomes slug in dbInsertProduct)
+        id: id,           // Auto-generated UUID
         name: name, 
         price: price, 
         image: image,     // Frontend image (becomes image_url in dbInsertProduct)
-        sku: sku 
+        sku: sku          // Auto-generated from name
       };
       
       console.log('📦 Product item prepared:', item);
@@ -566,12 +562,54 @@
     }
 
     async function addCombo() {
-      const id = String(formC.id.value||'').trim(); const title = String(formC.title.value||'').trim(); const desc = String(formC.desc.value||'').trim(); const items = String(formC.items.value||'').split(',').map(s=>s.trim()).filter(Boolean); let image = String(formC.image.value||'').trim();
-      if (!id||!title) { showToast('Provide combo id and title'); return; }
-      if (formC.file && formC.file.files && formC.file.files[0] && supabase) { try { const file = formC.file.files[0]; const dest = `public/${Date.now()}-${file.name.replaceAll(/\s+/g,'_')}`; image = await uploadImageToStorage(file, dest); } catch(e){console.error(e);} }
-      const item = { id, title, description: desc, items, image };
-      if (supabase) { try { await supabase.from('combos').insert([item]); showToast('Combo added (supabase)'); await loadData(); clearComboForm(); return; } catch(e){console.error(e); showToast('Error');} }
-      combos.unshift(item); localSave(COMBOS_KEY, combos); renderCombosLocal(); clearComboForm(); showToast('Combo added (local)');
+      // Generate auto-generated ID
+      const id = generateUUID();
+      const title = String(formC.title.value || '').trim(); 
+      const desc = String(formC.desc.value || '').trim(); 
+      const items = String(formC.items.value || '').split(',').map(s=>s.trim()).filter(Boolean); 
+      let image = String(formC.image.value || '').trim();
+      
+      if (!title) { 
+        showToast('Please provide combo title'); 
+        return; 
+      }
+      
+      if (items.length === 0) {
+        showToast('Please provide at least one item'); 
+        return;
+      }
+      
+      // if file chosen and supabase configured, upload
+      if (formC.file && formC.file.files && formC.file.files[0] && supabase) { 
+        try { 
+          const file = formC.file.files[0]; 
+          const dest = `public/${Date.now()}-${file.name.replaceAll(/\s+/g,'_')}`; 
+          image = await uploadImageToStorage(file, dest); 
+        } catch(e){console.error(e);} 
+      }
+      
+      const item = { 
+        id: id,           // Auto-generated UUID
+        title: title, 
+        description: desc, 
+        items: items, 
+        image: image 
+      };
+      
+      if (supabase) { 
+        try { 
+          await supabase.from('combos').insert([item]); 
+          showToast('Combo added (supabase)'); 
+          await loadData(); 
+          clearComboForm(); 
+          return; 
+        } catch(e){console.error(e); showToast('Error');} 
+      }
+      combos.unshift(item); 
+      localSave(COMBOS_KEY, combos); 
+      renderCombosLocal(); 
+      clearComboForm(); 
+      showToast('Combo added (local)');
     }
 
     async function updateCombo() {
@@ -589,8 +627,36 @@
       combos = combos.filter(c=>c.id!==id); localSave(COMBOS_KEY, combos); renderCombosLocal(); clearComboForm(); showToast('Deleted (local)');
     }
 
-    function clearProductForm(){ formP.id.value=formP.name.value=formP.price.value=formP.image.value=formP.sku.value=''; formP.id.dataset.original=''; selectedProductId=null; $('.items-list .item.selected')?.classList?.remove('selected'); }
-    function clearComboForm(){ formC.id.value=formC.title.value=formC.desc.value=formC.image.value=formC.items.value=''; formC.id.dataset.original=''; selectedComboId=null; $('.items-list .item.selected')?.classList?.remove('selected'); }
+    function clearProductForm(){ 
+      // Generate new UUID and clear form
+      const newId = generateUUID();
+      formP.id.value = newId;
+      formP.name.value = '';
+      formP.price.value = '';
+      formP.image.value = '';
+      formP.sku.value = ''; // Will be generated when name is entered
+      formP.id.dataset.original = ''; 
+      selectedProductId = null; 
+      $('.items-list .item.selected')?.classList?.remove('selected'); 
+      
+      // Auto-generate SKU when name changes
+      formP.name.addEventListener('input', function() {
+        const name = this.value.trim();
+        formP.sku.value = generateSkuFromName(name);
+      });
+    }
+    function clearComboForm(){ 
+      // Generate new UUID and clear form
+      const newId = generateUUID();
+      formC.id.value = newId;
+      formC.title.value = '';
+      formC.desc.value = '';
+      formC.image.value = '';
+      formC.items.value = '';
+      formC.id.dataset.original = ''; 
+      selectedComboId = null; 
+      $('.items-list .item.selected')?.classList?.remove('selected'); 
+    }
 
     function setSelectedListItem(listEl, li){ listEl.querySelectorAll('.item').forEach(x=>x.classList.remove('selected')); li.classList.add('selected'); }
     function selectProduct(id){ 
@@ -606,7 +672,7 @@
       formP.name.value=p.name; 
       formP.price.value=p.price; 
       formP.image.value=p.image||p.image_url||''; 
-      formP.sku.value=p.sku||''; 
+      formP.sku.value=p.sku||generateSkuFromName(p.name); // Ensure SKU is populated
       formP.id.dataset.original=p.id; 
       selectedProductId=p.id; 
       
@@ -614,7 +680,7 @@
       console.log('   ID:', p.id);
       console.log('   Name:', p.name);
       console.log('   Price:', p.price);
-      console.log('   SKU:', p.sku);
+      console.log('   SKU:', p.sku || generateSkuFromName(p.name));
       
       showToast('Loaded'); 
     }
@@ -698,8 +764,35 @@
       console.log('✅ UI event listeners bound successfully');
     }
 
-    // generate SKU
-    function generateSku(id,name){ return (String(id||name||'').toUpperCase().replace(/\s+/g,'-').replace(/[^A-Z0-9\-]/g,'') || 'TEEMA-ITEM'); }
+    // generate UUID
+    function generateUUID() {
+      return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+        const r = Math.random() * 16 | 0;
+        const v = c === 'x' ? r : (r & 0x3 | 0x8);
+        return v.toString(16);
+      });
+    }
+
+    // generate SKU based on name
+    function generateSkuFromName(name) {
+      if (!name) return 'TEEMA-ITEM';
+      
+      // Remove special characters and convert to uppercase
+      const clean = name.toString()
+        .toUpperCase()
+        .replace(/[^A-Z0-9\s]/g, '')
+        .trim();
+      
+      // Replace spaces with hyphens and limit to reasonable length
+      const normalized = clean.replace(/\s+/g, '-').substring(0, 20);
+      
+      return normalized || 'TEEMA-ITEM';
+    }
+
+    // Legacy SKU function (keep for compatibility)
+    function generateSku(id, name) {
+      return generateSkuFromName(name);
+    }
 
     // init
     (async function init(){

@@ -6,19 +6,42 @@
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
   <meta http-equiv="Pragma" content="no-cache">
   <meta http-equiv="Expires" content="0">
-  <title>Teema — Admin Login v3</title>
-  <link rel="stylesheet" href="admin.css?v=3">
+  <title>Teema — Admin Login</title>
+  <link rel="stylesheet" href="login.css">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
-  <main class="container" style="max-width:640px;margin:40px auto;">
-    <h1>Admin sign in</h1>
-    <form id="login-form" onsubmit="return false;">
-      <label>Email <input id="email" type="email" required /></label>
-      <label>Password <input id="password" type="password" required /></label>
-      <div style="margin-top:12px;"><button id="signin" class="btn btn-primary">Sign in</button></div>
-      <div id="msg" style="margin-top:10px;color:#c00"></div>
-    </form>
-  </main>
+  <div class="login-container">
+    <div class="login-card">
+      <div class="login-header">
+        <div class="login-logo">T</div>
+        <h1 class="login-title">Welcome Back</h1>
+        <p class="login-subtitle">Sign in to access the admin dashboard</p>
+      </div>
+      
+      <form id="login-form" class="login-form" onsubmit="return false;">
+        <div class="form-group">
+          <label for="email" class="form-label">Email Address</label>
+          <input id="email" type="email" class="form-input form-input-icon" placeholder="admin@example.com" required autocomplete="email" />
+        </div>
+        
+        <div class="form-group">
+          <label for="password" class="form-label">Password</label>
+          <input id="password" type="password" class="form-input form-input-icon" placeholder="Enter your password" required autocomplete="current-password" />
+        </div>
+        
+        <button id="signin" type="submit" class="login-button">
+          <span class="button-text">Sign In</span>
+        </button>
+      </form>
+      
+      <div id="msg" class="login-error"></div>
+      
+      <div class="login-footer">
+        <a href="/index.html">← Back to Store</a>
+      </div>
+    </div>
+  </div>
   
   <!-- Load Supabase configuration -->
   <script>
@@ -70,24 +93,31 @@
           
           const email = document.getElementById('email')?.value?.trim();
           const password = document.getElementById('password')?.value;
+          const signinBtn = document.getElementById('signin');
+          const msgDiv = document.getElementById('msg');
           
           console.log('📝 Form data:', { email, password: password ? '***' : 'empty' });
           
           if (!email || !password) {
             console.warn('⚠️ Missing email or password');
-            if (msgDiv) msgDiv.textContent = 'Please enter email and password';
+            showError('Please enter email and password');
             return;
           }
           
+          // Show loading state
+          signinBtn.classList.add('loading');
+          signinBtn.disabled = true;
+          hideError();
+          showError('Signing in...');
+          
           console.log('🔐 Attempting sign in...');
-          if (msgDiv) msgDiv.textContent = 'Signing in...';
           
           try{
             const { data, error } = await supabase.auth.signInWithPassword({ email, password });
             
             if (error) {
               console.error('❌ Sign in error:', error);
-              if (msgDiv) msgDiv.textContent = 'Sign-in error: ' + error.message;
+              showError('Sign-in error: ' + error.message);
               return;
             }
             
@@ -95,15 +125,49 @@
             console.log('👤 User:', data.user?.email);
             console.log('🆔 User ID:', data.user?.id);
             
-            if (msgDiv) msgDiv.textContent = 'Signed in. Redirecting to admin...';
+            showSuccess('Signed in successfully! Redirecting...');
             
             // 🔄 REDIRECT: Go to admin dashboard (Supabase handles session automatically)
-            setTimeout(()=> window.location.href = '/admin.html', 800);
+            setTimeout(()=> window.location.href = '/admin.html', 1500);
             
           }catch(e){
             console.error('❌ Unexpected error:', e);
-            if (msgDiv) msgDiv.textContent = 'Error: ' + (e.message || e);
+            showError('Error: ' + (e.message || e));
+          } finally {
+            // Reset loading state
+            signinBtn.classList.remove('loading');
+            signinBtn.disabled = false;
           }
+        });
+        
+        // Helper functions for better UX
+        function showError(message) {
+          const msgDiv = document.getElementById('msg');
+          if (msgDiv) {
+            msgDiv.textContent = message;
+            msgDiv.className = 'login-error show';
+          }
+        }
+        
+        function showSuccess(message) {
+          const msgDiv = document.getElementById('msg');
+          if (msgDiv) {
+            msgDiv.textContent = message;
+            msgDiv.className = 'login-success show';
+          }
+        }
+        
+        function hideError() {
+          const msgDiv = document.getElementById('msg');
+          if (msgDiv) {
+            msgDiv.className = 'login-error';
+          }
+        }
+        
+        // Form submission handler
+        document.getElementById('login-form').addEventListener('submit', (e) => {
+          e.preventDefault();
+          document.getElementById('signin').click();
         });
         
         console.log('✅ Login setup complete');
@@ -111,7 +175,7 @@
       }).catch(e=>{
         console.error('❌ Failed to import Supabase:', e);
         if (document.getElementById('msg')) {
-          document.getElementById('msg').textContent = 'Could not load Supabase client: ' + e.message;
+          showError('Could not load authentication service: ' + e.message);
         }
       });
     }

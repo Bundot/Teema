@@ -170,24 +170,22 @@
                 const lines = [];
                 lines.push('Hello, I would like to place an order from Teema:');
                 lines.push('');
-                // itemized lines with SKU
+                // itemized lines without SKU
                 items.forEach(it => {
                     const qty = it.quantity || 0;
                     const per = formatNGN(it.price);
                     const subtotal = formatNGN((it.price || 0) * qty);
-                    lines.push(`${qty} x ${it.name} (SKU: ${it.sku || 'N/A'}) — ${per} each = ${subtotal}`);
+                    lines.push(`${qty} x ${it.name} — ${per} each = ${subtotal}`);
                 });
                 lines.push('');
-                lines.push(`Subtotal: ${formatNGN(cartTotal())}`);
-                lines.push(`Delivery fee: ${formatNGN(DELIVERY_FEE)}`);
-                lines.push(`Grand total: ${formatNGN(cartTotal() + DELIVERY_FEE)}`);
+                lines.push(`Total: ${formatNGN(cartTotal())}`);
                 lines.push('');
                 lines.push('Delivery address:');
                 lines.push('Contact name:');
                 lines.push('Phone:');
                 lines.push('Please confirm your phone number above before sending.');
                 const message = lines.join('\n');
-                const rawPhone = '+2349031576385';
+                const rawPhone = '+447588290168';
                 const phoneDigits = rawPhone.replace(/\D/g, '');
                 const url = `https://wa.me/${phoneDigits}?text=${encodeURIComponent(message)}`;
                 window.open(url, '_blank');
