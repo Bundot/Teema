@@ -1,0 +1,360 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Teema — Admin Dashboard</title>
+  <link rel="stylesheet" href="admin.css">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+</head>
+<body>
+  <header class="admin-header">
+  <div class="container">
+
+  <!-- use existing asset if available to avoid 404s when logo.png is missing -->
+  <img src="assets/top1.png" class="site-logo" alt="Teema logo">
+
+    <h1>Admin Panel</h1>
+
+    <nav class="admin-nav">
+      <a href="#">Dashboard</a>
+      <a href="#">Orders</a>
+      <a href="#">Logout</a>
+    </nav>
+
+  </div>
+</header>
+
+  <main class="container admin-main">
+    <section class="panel">
+      <h2>Products Management</h2>
+      <p class="muted">Add, edit or remove products. This UI stores changes in localStorage for simulation.</p>
+
+      <div class="grid">
+        <div class="panel-col">
+          <form id="product-form" class="form-panel" onsubmit="return false;">
+            <label>Product ID <input id="p-id" type="text" name="id" placeholder="e.g. rice" /></label>
+            <label>Name <input id="p-name" type="text" name="name" placeholder="Product name" /></label>
+            <label>Price (₦) <input id="p-price" type="number" name="price" placeholder="e.g. 4500" /></label>
+            <label>Image URL <input id="p-image" type="text" name="image" placeholder="assets/products/rice.jpeg" /></label>
+            <label>Or upload image <input id="p-image-file" type="file" accept="image/*" /></label>
+            <label>SKU <input id="p-sku" type="text" name="sku" placeholder="TEEMA-RICE" /></label>
+            <div class="form-actions">
+              <button id="add-product" type="button" class="btn btn-primary">Add product</button>
+              <button id="update-product" type="button" class="btn">Update selected</button>
+              <button id="delete-product" type="button" class="btn btn-ghost">Delete selected</button>
+            </div>
+          </form>
+        </div>
+
+        <div class="panel-col">
+          <div class="list-panel">
+            <h3>Existing products (preview)</h3>
+            <ul id="products-list" class="items-list">
+              <li class="item" data-id="rice" data-name="Rice" data-price="4500" data-image="assets/products/rice.jpg" data-sku="TEEMA-RICE">
+                <strong>rice</strong>
+                <span class="meta">Rice — ₦4500</span>
+                <div class="row-actions"><button class="mini edit">Edit</button><button class="mini danger del">Del</button></div>
+              </li>
+              <li class="item" data-id="amala" data-name="Amala Flour" data-price="600" data-image="assets/products/amala.jpg" data-sku="TEEMA-AMALA">
+                <strong>amala</strong>
+                <span class="meta">Amala Flour — ₦600</span>
+                <div class="row-actions"><button class="mini edit">Edit</button><button class="mini danger del">Del</button></div>
+              </li>
+              <li class="item" data-id="tomato-paste" data-name="Derica Tomato Paste" data-price="650" data-image="assets/products/tomato.jpg" data-sku="TEEMA-TOMATO">
+                <strong>tomato-paste</strong>
+                <span class="meta">Derica Tomato Paste — ₦650</span>
+                <div class="row-actions"><button class="mini edit">Edit</button><button class="mini danger del">Del</button></div>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="panel">
+      <h2>Popular Combos</h2>
+      <p class="muted">Manage the combos that appear on the home screen.</p>
+
+      <div class="grid">
+        <div class="panel-col">
+          <form id="combo-form" class="form-panel" onsubmit="return false;">
+            <label>Combo ID <input id="c-id" type="text" name="id" placeholder="e.g. rice-beef" /></label>
+            <label>Title <input id="c-title" type="text" name="title" placeholder="Rice + Beef" /></label>
+            <label>Description <input id="c-desc" type="text" name="description" placeholder="Short description" /></label>
+            <label>Image URL <input id="c-image" type="text" name="image" placeholder="assets/banner.jpg" /></label>
+            <label>Or upload image <input id="c-image-file" type="file" accept="image/*" /></label>
+            <label>Items (comma separated) <input id="c-items" type="text" name="items" placeholder="rice, beef" /></label>
+            <div class="form-actions">
+              <button id="add-combo" type="button" class="btn btn-primary">Add combo</button>
+              <button id="update-combo" type="button" class="btn">Update selected</button>
+              <button id="delete-combo" type="button" class="btn btn-ghost">Delete selected</button>
+            </div>
+          </form>
+        </div>
+
+        <div class="panel-col">
+          <div class="list-panel">
+            <h3>Existing combos (preview)</h3>
+            <ul id="combos-list" class="items-list">
+              <li class="item" data-id="rice-beef" data-title="Rice + Beef" data-description="Rice + Beef combo" data-image="assets/banner.jpg" data-items="rice,beef">
+                <strong>rice-beef</strong>
+                <span class="meta">Rice + Beef</span>
+                <div class="row-actions"><button class="mini edit">Edit</button><button class="mini danger del">Del</button></div>
+              </li>
+              <li class="item" data-id="yam-goat" data-title="Yam + Goat meat" data-description="Yam + Goat meat" data-image="assets/banner.jpg" data-items="yam,goat">
+                <strong>yam-goat</strong>
+                <span class="meta">Yam + Goat meat</span>
+                <div class="row-actions"><button class="mini edit">Edit</button><button class="mini danger del">Del</button></div>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <footer class="admin-footer">
+      <small>Admin UI — changes saved to localStorage (simulation).</small>
+    </footer>
+  </main>
+
+  <div id="admin-toast" aria-live="polite" style="position:fixed;right:18px;bottom:18px;display:none;background:#0b6;color:#fff;padding:10px 14px;border-radius:8px;box-shadow:0 6px 18px rgba(0,0,0,.12);"></div>
+
+  <script>
+  // quick sanity log to confirm the page and static scripts are loading
+  console.log('admin.html: static script loaded');
+  </script>
+
+  <script type="module">
+  // Admin frontend: support Supabase if window.SUPABASE_URL and window.SUPABASE_ANON are provided.
+  // Attempt to load a local config file `config/supabase.local.js` if present (this file is gitignored).
+  // If you prefer to set globals inline, you can still add a script tag before this module to set them.
+  // Example (not recommended for commits):
+  // <script>window.SUPABASE_URL='https://xyz.supabase.co'; window.SUPABASE_ANON='public-anon-key';</script>
+
+  // Try to load the local config (non-blocking). If the file does not exist, this will silently fail.
+  try {
+    const s = document.createElement('script');
+    s.src = 'config/supabase.local.js';
+    s.defer = true;
+    document.head.appendChild(s);
+  } catch (e) { console.debug('No local supabase config loaded', e); }
+
+  console.log('admin.module: about to import Supabase ESM client');
+  import('https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm').then(module => {
+    console.log('admin.module: Supabase ESM client imported');
+    const { createClient } = module;
+    const SUPABASE_URL = window.SUPABASE_URL || null;
+    const SUPABASE_ANON = window.SUPABASE_ANON || null;
+    const useSupabase = SUPABASE_URL && SUPABASE_ANON;
+    let supabase = null;
+    if (useSupabase) {
+      console.log('admin.module: creating Supabase client with provided keys', SUPABASE_URL, SUPABASE_ANON ? 'anon-present' : 'anon-missing');
+      supabase = createClient(SUPABASE_URL, SUPABASE_ANON);
+      console.info('Supabase client initialized for admin UI');
+      // Attempt to restore existing session saved by login page (supabase_session)
+      try {
+        const sessRaw = localStorage.getItem('supabase_session');
+        if (sessRaw) {
+          const sess = JSON.parse(sessRaw);
+          if (sess && sess.access_token && sess.refresh_token && supabase.auth && typeof supabase.auth.setSession === 'function') {
+            supabase.auth.setSession({ access_token: sess.access_token, refresh_token: sess.refresh_token });
+            console.info('Restored supabase session from localStorage');
+          }
+        }
+      } catch (e) { console.debug('Could not restore session from localStorage', e); }
+    } else {
+      console.info('Supabase not configured — admin will use localStorage simulation');
+    }
+
+    // keys for localStorage fallback
+    const PRODUCTS_KEY = 'teema_products_sim';
+    const COMBOS_KEY = 'teema_combos_sim';
+
+    const $ = sel => document.querySelector(sel);
+    const productsListEl = $('#products-list');
+    const combosListEl = $('#combos-list');
+
+    const formP = {
+      id: $('#p-id'), name: $('#p-name'), price: $('#p-price'), image: $('#p-image'), file: $('#p-image-file'), sku: $('#p-sku'), addBtn: $('#add-product'), updateBtn: $('#update-product'), deleteBtn: $('#delete-product')
+    };
+
+    const formC = {
+      id: $('#c-id'), title: $('#c-title'), desc: $('#c-desc'), image: $('#c-image'), file: $('#c-image-file'), items: $('#c-items'), addBtn: $('#add-combo'), updateBtn: $('#update-combo'), deleteBtn: $('#delete-combo')
+    };
+
+    let products = [];
+    let combos = [];
+    let selectedProductId = null;
+    let selectedComboId = null;
+
+    function showToast(msg, timeout = 2000) { const t = $('#admin-toast'); t.textContent = msg; t.style.display = 'block'; clearTimeout(t._to); t._to = setTimeout(() => t.style.display = 'none', timeout); }
+
+    function localSave(key, data) { localStorage.setItem(key, JSON.stringify(data)); }
+    function localLoad(key) { try { return JSON.parse(localStorage.getItem(key) || 'null'); } catch(e) { return null; } }
+
+    // Supabase helpers (if configured)
+    async function dbFetchProducts() {
+      if (!supabase) return [];
+      const { data, error } = await supabase.from('products').select('*').order('created_at', { ascending: false });
+      if (error) { console.error(error); return []; }
+      return data;
+    }
+    async function dbFetchCombos() {
+      if (!supabase) return [];
+      const { data, error } = await supabase.from('combos').select('*').order('created_at', { ascending: false });
+      if (error) { console.error(error); return []; }
+      return data;
+    }
+
+    async function dbInsertProduct(p) {
+      if (!supabase) return null;
+      const { data, error } = await supabase.from('products').insert([p]);
+      if (error) throw error; return data && data[0];
+    }
+    async function dbUpdateProduct(id, p) {
+      if (!supabase) return null;
+      const { data, error } = await supabase.from('products').update(p).eq('id', id);
+      if (error) throw error; return data && data[0];
+    }
+    async function dbDeleteProduct(id) {
+      if (!supabase) return null;
+      const { data, error } = await supabase.from('products').delete().eq('id', id);
+      if (error) throw error; return data;
+    }
+
+    async function uploadImageToStorage(file, destPath) {
+      if (!supabase) return null;
+      const bucket = 'product-images';
+      const { data, error } = await supabase.storage.from(bucket).upload(destPath, file, { cacheControl: '3600', upsert: false });
+      if (error) throw error;
+      const publicUrl = supabase.storage.from(bucket).getPublicUrl(destPath).publicURL;
+      return publicUrl;
+    }
+
+    // Render helpers
+    function renderProductsLocal() {
+      productsListEl.innerHTML = products.map(p => `<li class="item" data-id="${escapeHtml(p.id)}" data-name="${escapeHtml(p.name)}" data-price="${p.price}" data-image="${escapeHtml(p.image || p.image_url || '')}" data-sku="${escapeHtml(p.sku || '')}"><strong>${escapeHtml(p.id)}</strong><span class="meta">${escapeHtml(p.name)} — ₦${numberWithCommas(p.price)}</span><div class="row-actions"><button class="mini edit">Edit</button><button class="mini danger del">Del</button></div></li>`).join('');
+    }
+
+    function renderCombosLocal() {
+      combosListEl.innerHTML = combos.map(c => `<li class="item" data-id="${escapeHtml(c.id)}" data-title="${escapeHtml(c.title)}" data-description="${escapeHtml(c.description)}" data-image="${escapeHtml(c.image || c.image_url || '')}" data-items="${escapeHtml((c.items||[]).join(','))}"><strong>${escapeHtml(c.id)}</strong><span class="meta">${escapeHtml(c.title)}</span><div class="row-actions"><button class="mini edit">Edit</button><button class="mini danger del">Del</button></div></li>`).join('');
+    }
+
+    function escapeHtml(s){ return String(s||'').replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;'); }
+    function numberWithCommas(x){ return String(x).replace(/\B(?=(\d{3})+(?!\d))/g, ","); }
+
+    // CRUD operations (use Supabase if configured, otherwise localStorage)
+    async function loadData() {
+      if (supabase) {
+        try { products = await dbFetchProducts(); combos = await dbFetchCombos(); renderProductsLocal(); renderCombosLocal(); return; } catch (e) { console.error('Supabase load error', e); }
+      }
+      // fallback
+      const pLocal = localLoad(PRODUCTS_KEY); const cLocal = localLoad(COMBOS_KEY);
+      if (pLocal && Array.isArray(pLocal)) products = pLocal;
+      if (cLocal && Array.isArray(cLocal)) combos = cLocal;
+      // try assets
+      if (!products.length) {
+        try { const r = await fetch('assets/products.json'); if (r.ok) { products = await r.json(); } } catch(e){}
+      }
+      renderProductsLocal(); renderCombosLocal();
+    }
+
+    async function addProduct() {
+      const id = String(formP.id.value || '').trim(); const name = String(formP.name.value || '').trim(); const price = Number(formP.price.value || 0); let image = String(formP.image.value || '').trim(); let sku = String(formP.sku.value || '').trim();
+      if (!id || !name) { showToast('Provide ID and name'); return; }
+      if (products.find(p => p.id === id)) { showToast('ID exists — use update'); return; }
+      // if file chosen and supabase configured, upload
+      if (formP.file && formP.file.files && formP.file.files[0] && supabase) {
+        try {
+          const file = formP.file.files[0];
+          const dest = `public/${Date.now()}-${file.name.replaceAll(/\s+/g,'_')}`;
+          image = await uploadImageToStorage(file, dest);
+        } catch (e) { console.error('upload error', e); showToast('Image upload failed'); }
+      }
+      if (!sku) sku = generateSku(id, name);
+      const item = { id, name, price, image, sku };
+      if (supabase) {
+        try { await dbInsertProduct(item); showToast('Product added (supabase)'); await loadData(); clearProductForm(); return; } catch (e) { console.error(e); showToast('Error adding product'); }
+      }
+      // fallback local
+      products.unshift(item); localSave(PRODUCTS_KEY, products); renderProductsLocal(); clearProductForm(); showToast('Product added (local)');
+    }
+
+    async function updateProduct() {
+      const orig = formP.id.dataset.original || selectedProductId; if (!orig) { showToast('Select product'); return; }
+      const id = String(formP.id.value || '').trim(); const name = String(formP.name.value || '').trim(); const price = Number(formP.price.value || 0); let image = String(formP.image.value || '').trim(); let sku = String(formP.sku.value || '').trim();
+      if (!id || !name) { showToast('Provide ID and name'); return; }
+      if (formP.file && formP.file.files && formP.file.files[0] && supabase) {
+        try { const file = formP.file.files[0]; const dest = `public/${Date.now()}-${file.name.replaceAll(/\s+/g,'_')}`; image = await uploadImageToStorage(file, dest); } catch(e){console.error(e);}
+      }
+      const payload = { id, name, price, image, sku: sku || generateSku(id,name) };
+      if (supabase) { try { await dbUpdateProduct(orig, payload); showToast('Product updated (supabase)'); await loadData(); clearProductForm(); return; } catch(e){console.error(e); showToast('Error updating');} }
+      // fallback
+      const idx = products.findIndex(p=>p.id===orig); if (idx!==-1) { products[idx]=payload; localSave(PRODUCTS_KEY, products); renderProductsLocal(); clearProductForm(); showToast('Product updated (local)'); }
+    }
+
+    async function deleteProduct(id) {
+      if (!confirm('Delete product ' + id + ' ?')) return;
+      if (supabase) { try { await dbDeleteProduct(id); showToast('Deleted (supabase)'); await loadData(); return; } catch(e){console.error(e); showToast('Error deleting');} }
+      products = products.filter(p=>p.id!==id); localSave(PRODUCTS_KEY, products); renderProductsLocal(); clearProductForm(); showToast('Deleted (local)');
+    }
+
+    async function addCombo() {
+      const id = String(formC.id.value||'').trim(); const title = String(formC.title.value||'').trim(); const desc = String(formC.desc.value||'').trim(); const items = String(formC.items.value||'').split(',').map(s=>s.trim()).filter(Boolean); let image = String(formC.image.value||'').trim();
+      if (!id||!title) { showToast('Provide combo id and title'); return; }
+      if (formC.file && formC.file.files && formC.file.files[0] && supabase) { try { const file = formC.file.files[0]; const dest = `public/${Date.now()}-${file.name.replaceAll(/\s+/g,'_')}`; image = await uploadImageToStorage(file, dest); } catch(e){console.error(e);} }
+      const item = { id, title, description: desc, items, image };
+      if (supabase) { try { await supabase.from('combos').insert([item]); showToast('Combo added (supabase)'); await loadData(); clearComboForm(); return; } catch(e){console.error(e); showToast('Error');} }
+      combos.unshift(item); localSave(COMBOS_KEY, combos); renderCombosLocal(); clearComboForm(); showToast('Combo added (local)');
+    }
+
+    async function updateCombo() {
+      const orig = formC.id.dataset.original || selectedComboId; if (!orig) { showToast('Select combo'); return; }
+      const id = String(formC.id.value||'').trim(); const title = String(formC.title.value||'').trim(); const desc = String(formC.desc.value||'').trim(); const items = String(formC.items.value||'').split(',').map(s=>s.trim()).filter(Boolean); let image = String(formC.image.value||'').trim();
+      if (formC.file && formC.file.files && formC.file.files[0] && supabase) { try { const file = formC.file.files[0]; const dest = `public/${Date.now()}-${file.name.replaceAll(/\s+/g,'_')}`; image = await uploadImageToStorage(file, dest); } catch(e){console.error(e);} }
+      const payload = { id, title, description: desc, items, image };
+      if (supabase) { try { await supabase.from('combos').update(payload).eq('id', orig); showToast('Combo updated (supabase)'); await loadData(); clearComboForm(); return; } catch(e){console.error(e);} }
+      const idx = combos.findIndex(c=>c.id===orig); if (idx!==-1) { combos[idx]=payload; localSave(COMBOS_KEY, combos); renderCombosLocal(); clearComboForm(); showToast('Combo updated (local)'); }
+    }
+
+    async function deleteCombo(id) {
+      if (!confirm('Delete combo ' + id + ' ?')) return;
+      if (supabase) { try { await supabase.from('combos').delete().eq('id', id); showToast('Deleted (supabase)'); await loadData(); return; } catch(e){console.error(e);} }
+      combos = combos.filter(c=>c.id!==id); localSave(COMBOS_KEY, combos); renderCombosLocal(); clearComboForm(); showToast('Deleted (local)');
+    }
+
+    function clearProductForm(){ formP.id.value=formP.name.value=formP.price.value=formP.image.value=formP.sku.value=''; formP.id.dataset.original=''; selectedProductId=null; $('.items-list .item.selected')?.classList?.remove('selected'); }
+    function clearComboForm(){ formC.id.value=formC.title.value=formC.desc.value=formC.image.value=formC.items.value=''; formC.id.dataset.original=''; selectedComboId=null; $('.items-list .item.selected')?.classList?.remove('selected'); }
+
+    function setSelectedListItem(listEl, li){ listEl.querySelectorAll('.item').forEach(x=>x.classList.remove('selected')); li.classList.add('selected'); }
+    function selectProduct(id){ const p = products.find(x=>x.id===id); if(!p) return; formP.id.value=p.id; formP.name.value=p.name; formP.price.value=p.price; formP.image.value=p.image||p.image_url||''; formP.sku.value=p.sku||''; formP.id.dataset.original=p.id; selectedProductId=p.id; showToast('Loaded'); }
+    function selectCombo(id){ const c = combos.find(x=>x.id===id); if(!c) return; formC.id.value=c.id; formC.title.value=c.title; formC.desc.value=c.description||''; formC.image.value=c.image||c.image_url||''; formC.items.value=(c.items||[]).join(', '); formC.id.dataset.original=c.id; selectedComboId=c.id; showToast('Loaded'); }
+
+    function bindUi(){
+      productsListEl.addEventListener('click', ev=>{ const btn=ev.target.closest('button'); const li=ev.target.closest('li.item'); if(!li) return; const id=li.dataset.id; if(btn){ if(btn.classList.contains('edit')) selectProduct(id); else if(btn.classList.contains('del')) deleteProduct(id); } else { setSelectedListItem(productsListEl, li); selectProduct(id); } });
+      combosListEl.addEventListener('click', ev=>{ const btn=ev.target.closest('button'); const li=ev.target.closest('li.item'); if(!li) return; const id=li.dataset.id; if(btn){ if(btn.classList.contains('edit')) selectCombo(id); else if(btn.classList.contains('del')) deleteCombo(id); } else { setSelectedListItem(combosListEl, li); selectCombo(id); } });
+      formP.addBtn.addEventListener('click', addProduct); formP.updateBtn.addEventListener('click', updateProduct); formP.deleteBtn.addEventListener('click', ()=>{ if(selectedProductId) deleteProduct(selectedProductId); });
+      formC.addBtn.addEventListener('click', addCombo); formC.updateBtn.addEventListener('click', updateCombo); formC.deleteBtn.addEventListener('click', ()=>{ if(selectedComboId) deleteCombo(selectedComboId); });
+    }
+
+    // generate SKU
+    function generateSku(id,name){ return (String(id||name||'').toUpperCase().replace(/\s+/g,'-').replace(/[^A-Z0-9\-]/g,'') || 'TEEMA-ITEM'); }
+
+    // init
+    (async function init(){
+      console.log('admin.module: init starting - about to load data');
+      await loadData();
+      console.log('admin.module: loadData completed - binding UI');
+      bindUi();
+      showToast('Admin ready', 900);
+      console.log('admin.module: init finished');
+    })();
+
+    // small helpers to use $ inside module
+    function $(sel){ return document.querySelector(sel); }
+
+  }).catch(err=>{ console.error('Could not load supabase client', err); });
+  </script>
+</body>
+</html>

@@ -59,7 +59,7 @@
 				</div>
 
 				<div class="hero-image">
-					<img src="https://images.unsplash.com/photo-1604908176997-125f25cc6f3d"
+					<img src="./assets/top1.jpg"
 						alt="Assorted Nigerian meals on a table">
 				</div>
 			</div>
@@ -75,33 +75,9 @@
 		<section class="chef fade-in container" id="products">
 			<h2>Products</h2>
 
-			<div class="food-grid home-food-grid">
-				<!-- Product cards (Trimmed for Home Page) -->
-				<div class="food-card red" data-id="rice" data-name="Rice" data-price="4500">
-					<img loading="lazy" src="https://images.unsplash.com/photo-1562967914-6082f9bfb5b8" alt="Rice">
-					<p>Rice</p>
-					<div class="price">₦4,500</div>
-					<button class="add-to-cart" aria-label="Add Rice to cart">Add to cart</button>
-				</div>
-				<div class="food-card orange" data-id="beans" data-name="Beans" data-price="2500">
-					<img loading="lazy" src="https://images.unsplash.com/photo-1589307000243-33d1f9d0d6a7" alt="Beans">
-					<p>Beans</p>
-					<div class="price">₦2,500</div>
-					<button class="add-to-cart" aria-label="Add Beans to cart">Add to cart</button>
-				</div>
-				<div class="food-card yellow" data-id="yam" data-name="Yam" data-price="3000">
-					<img loading="lazy" src="https://images.unsplash.com/photo-1547516508-4f4f1a30f421" alt="Yam">
-					<p>Yam</p>
-					<div class="price">₦3,000</div>
-					<button class="add-to-cart" aria-label="Add Yam to cart">Add to cart</button>
-				</div>
-				<div class="food-card brown" data-id="pepper" data-name="Pepper" data-price="1200">
-					<img loading="lazy" src="https://images.unsplash.com/photo-1544025162-d76694265947" alt="Pepper">
-					<p>Pepper</p>
-					<div class="price">₦1,200</div>
-					<button class="add-to-cart" aria-label="Add Pepper to cart">Add to cart</button>
-				</div>
-			</div>
+			<!-- Product cards (Trimmed for Home Page) -->
+			<!-- Home products rendered from products JSON (first 4 items) -->
+			<div id="home-products-grid" class="food-grid home-food-grid"></div>
 
 			<div style="margin-top: 40px; text-align: center;">
 				<a href="products.html" class="btn"
@@ -210,6 +186,70 @@
 	</div>
 
 	<script src="script.js?v=5"></script>
+
+	<!-- Inline products JSON for home page rendering (first-3 selection uses this as source) -->
+	<script id="products-json" type="application/json">
+[
+	{"id":"dericatomatoepaste","name":"Derica Tomato Paste","price":650,"image":"assets/products/Dericatomatoepaste.jpeg","sku":"TEEMA-DERICATOMATOEPASTE"},
+	{"id":"amalaflour","name":"Amala Flour","price":600,"image":"assets/products/amalaflour.jpg","sku":"TEEMA-AMALA-FLOUR"},
+	{"id":"amazinggraceredwine","name":"Amazing Grace Red Wine","price":6500,"image":"assets/products/amazinggraceredwine.jpeg","sku":"TEEMA-AMAZINGGRACE-RED-WINE"},
+	{"id":"amazinggraceredwinesmall","name":"Amazing Grace Red Wine (Small)","price":3500,"image":"assets/products/amazinggraceredwinesmall.jpeg","sku":"TEEMA-AMAZINGGRACE-RED-WINE-SM"},
+	{"id":"amstelmalt","name":"Amstel Malt","price":600,"image":"assets/products/amstelmalt.jpeg","sku":"TEEMA-AMSTEL-MALT"},
+	{"id":"bangaredoil","name":"Banga Red Oil","price":1200,"image":"assets/products/bangaredoil.jpeg","sku":"TEEMA-BANGA-RED-OIL"},
+	{"id":"beans","name":"Beans","price":2500,"image":"assets/products/beans.jpeg","sku":"TEEMA-BEANS"},
+	{"id":"beef","name":"Beef","price":9000,"image":"assets/products/beef.jpg","sku":"TEEMA-BEEF"},
+	{"id":"bournvita","name":"Bournvita","price":900,"image":"assets/products/bournvita.jpeg","sku":"TEEMA-BOURNVITA"},
+	{"id":"bunsmix","name":"Buns Mix","price":1200,"image":"assets/products/bunsmix.jpeg","sku":"TEEMA-BUNS-MIX"},
+	{"id":"cassavaflour","name":"Cassava Flour","price":500,"image":"assets/products/cassavaflour.jpg","sku":"TEEMA-CASSAVA-FLOUR"},
+	{"id":"cerelac","name":"Cerelac","price":1200,"image":"assets/products/cerelac.jpeg","sku":"TEEMA-CERELAC"},
+	{"id":"cerelacc","name":"Cerelac (C)","price":1200,"image":"assets/products/cerelacc.jpeg","sku":"TEEMA-CERELAC-C"},
+	{"id":"cerelacwheatble","name":"Cerelac Wheat","price":1200,"image":"assets/products/cerelacwheatble.jpeg","sku":"TEEMA-CERELAC-WHEAT"},
+	{"id":"checkerscustardbanana","name":"Checkers Custard (Banana)","price":800,"image":"assets/products/checkerscustardbanana.jpeg","sku":"TEEMA-CHECKERS-CUSTARD-BANANA"},
+	{"id":"checkerscustardvanilla","name":"Checkers Custard (Vanilla)","price":800,"image":"assets/products/checkerscustardvanilla.jpeg","sku":"TEEMA-CHECKERS-CUSTARD-VANILLA"},
+	{"id":"checkerscustardvanillalarge","name":"Checkers Custard (Vanilla Large)","price":1400,"image":"assets/products/checkerscustardvanillalarge.jpeg","sku":"TEEMA-CHECKERS-CUSTARD-VAN-L"},
+	{"id":"chicken","name":"Chicken","price":8000,"image":"assets/products/chicken.jpeg","sku":"TEEMA-CHICKEN"},
+	{"id":"coconutmilk","name":"Coconut Milk","price":700,"image":"assets/products/coconutmilk.jpeg","sku":"TEEMA-COCONUT-MILK"},
+	{"id":"crayfish","name":"Crayfish","price":1500,"image":"assets/products/crayfish.jpeg","sku":"TEEMA-CRAYFISH"},
+	{"id":"devinawhitegrapewine","name":"Devina White Grape Wine","price":6500,"image":"assets/products/devinawhitegrapewine.jpeg","sku":"TEEMA-DEVINA-WHITE-WINE"},
+	{"id":"fayrouz","name":"Fayrouz","price":800,"image":"assets/products/fayrouz.png","sku":"TEEMA-FAYROUZ"},
+	{"id":"fufuflour","name":"Fufu Flour","price":700,"image":"assets/products/fufuflour.jpg","sku":"TEEMA-FUFU-FLOUR"},
+	{"id":"garri","name":"Garri","price":600,"image":"assets/products/garri.png","sku":"TEEMA-GARRI"},
+	{"id":"ginotomatoepaste","name":"Gino Tomato Paste","price":650,"image":"assets/products/ginotomatoepaste.jpeg","sku":"TEEMA-GINO-TOMATO-PASTE"},
+	{"id":"gizzard","name":"Gizzard","price":1200,"image":"assets/products/gizzard.jpeg","sku":"TEEMA-GIZZARD"},
+	{"id":"goatmeat","name":"Goat Meat","price":11000,"image":"assets/products/goatmeat.jpg","sku":"TEEMA-GOAT-MEAT"},
+	{"id":"goldenmorn","name":"Golden Morn","price":900,"image":"assets/products/goldenmorn.jpeg","sku":"TEEMA-GOLDEN-MORN"},
+	{"id":"hakefish","name":"Hake Fish","price":4200,"image":"assets/products/hakefish.jpeg","sku":"TEEMA-HAKE-FISH"},
+	{"id":"iru","name":"Iru","price":600,"image":"assets/products/iru.webp","sku":"TEEMA-IRU"},
+	{"id":"jafrofoodschinchin","name":"Jafro Foods Chinchin","price":900,"image":"assets/products/jafrofoodschinchin.jpeg","sku":"TEEMA-JAFRO-CHINCHIN"},
+	{"id":"kpomo","name":"Kpomo","price":1500,"image":"assets/products/kpomo.jpg","sku":"TEEMA-KPOMO"},
+	{"id":"lacasera","name":"Lacasera","price":600,"image":"assets/products/lacasera.jpeg","sku":"TEEMA-LACASERA"},
+	{"id":"ladyBcustardpowder","name":"Lady B Custard Powder","price":900,"image":"assets/products/ladyBcustardpowder.jpeg","sku":"TEEMA-LADYB-CUSTARD"},
+	{"id":"lemonplus","name":"Lemon Plus","price":700,"image":"assets/products/lemonplus.jpeg","sku":"TEEMA-LEMON-PLUS"},
+	{"id":"mackarel","name":"Mackerel","price":1800,"image":"assets/products/mackarel.jpeg","sku":"TEEMA-MACKEREL"},
+	{"id":"malt","name":"Malt","price":700,"image":"assets/products/malt.jpeg","sku":"TEEMA-MALT"},
+	{"id":"maltina","name":"Maltina","price":600,"image":"assets/products/maltina.jpeg","sku":"TEEMA-MALTINA"},
+	{"id":"milorefill","name":"Milo Refill","price":900,"image":"assets/products/milorefill.jpeg","sku":"TEEMA-MILO-REFILL"},
+	{"id":"milotin","name":"Milotin","price":900,"image":"assets/products/milotin.jpeg","sku":"TEEMA-MILOTIN"},
+	{"id":"nido","name":"Nido","price":2500,"image":"assets/products/nido.jpeg","sku":"TEEMA-NIDO"},
+	{"id":"oluolupalmoil","name":"Oluolu Palm Oil","price":1200,"image":"assets/products/oluolupalmoil.jpeg","sku":"TEEMA-PALM-OIL"},
+	{"id":"palmnutsoup","name":"Palm Nut Soup","price":1500,"image":"assets/products/palmnutsoup.jpeg","sku":"TEEMA-PALM-NUT-SOUP"},
+	{"id":"peakmilktin","name":"Peak Milk Tin","price":1200,"image":"assets/products/peakmilktin.jpeg","sku":"TEEMA-PEAK-MILK-TIN"},
+	{"id":"pepper","name":"Pepper","price":1200,"image":"assets/products/pepper.jpeg","sku":"TEEMA-PEPPER"},
+	{"id":"plantain","name":"Plantain","price":500,"image":"assets/products/plantain.jpg","sku":"TEEMA-PLANTAIN"},
+	{"id":"poundoyam","name":"Poundo Yam","price":1200,"image":"assets/products/poundoyam.webp","sku":"TEEMA-POUNDO-YAM"},
+	{"id":"rice","name":"Rice","price":4500,"image":"assets/products/rice.jpeg","sku":"TEEMA-RICE"},
+	{"id":"semovita","name":"Semovita","price":700,"image":"assets/products/semovita.jpg","sku":"TEEMA-SEMOVITA"},
+	{"id":"stockfish","name":"Stock Fish","price":3200,"image":"assets/products/stockfish.jpg","sku":"TEEMA-STOCKFISH"},
+	{"id":"sunfloweroil","name":"Sunflower Oil","price":1200,"image":"assets/products/sunfloweroil.jpeg","sku":"TEEMA-SUNFLOWER-OIL"},
+	{"id":"supermalt","name":"Super Malt","price":700,"image":"assets/products/supermalt.jpeg","sku":"TEEMA-SUPERMALT"},
+	{"id":"tomtom","name":"TomTom (Snack)","price":600,"image":"assets/products/tomtom.jpeg","sku":"TEEMA-TOMTOM"},
+	{"id":"vicksblue","name":"Vicks Blue","price":800,"image":"assets/products/vicksblue.jpeg","sku":"TEEMA-VICKS-BLUE"},
+	{"id":"wheatflour","name":"Wheat Flour","price":400,"image":"assets/products/wheatflour.jpg","sku":"TEEMA-WHEAT-FLOUR"}
+]
+	</script>
+
+	<!-- Admin login shortcut (bottom-right) -->
+	<a href="/login.html" class="admin-login-link" aria-label="Admin login">Admin</a>
 
 </body>
 

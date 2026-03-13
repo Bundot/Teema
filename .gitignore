@@ -3,3 +3,7 @@
 node_modules/
 .vscode/
 .idea/
+
+# Local Supabase config (contains anon key) — do not commit
+config/supabase.local.js
+config/supabase.js

@@ -1,0 +1,27 @@
+{
+  "name": "teema",
+  "version": "1.0.0",
+  "description": "",
+  "main": "script.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Bundot/Teema.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Bundot/Teema/issues"
+  },
+  "homepage": "https://github.com/Bundot/Teema#readme",
+  "dependencies": {
+    "@supabase/supabase-js": "^2.99.1",
+    "jsdom": "^22.0.0"
+  }
+}

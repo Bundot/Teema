@@ -496,8 +496,8 @@ h3 {
 		grid-template-columns: repeat(3, 1fr)
 	}
 
-	/* Limit to 3 items on home grid for 1 row */
-	.home-food-grid .food-card:nth-child(n+4) {
+	/* Limit to 4 items on home grid (hide from 5th onward) */
+	.home-food-grid .food-card:nth-child(n+5) {
 		display: none !important;
 	}
 }
@@ -507,8 +507,8 @@ h3 {
 		grid-template-columns: repeat(2, 1fr)
 	}
 
-	/* Limit to 2 items on home grid for 1 row */
-	.home-food-grid .food-card:nth-child(n+3) {
+	/* Allow up to 4 items on home grid (hide from 5th onward) */
+	.home-food-grid .food-card:nth-child(n+5) {
 		display: none !important;
 	}
 }
@@ -517,6 +517,55 @@ h3 {
 	.food-grid {
 		grid-template-columns: 1fr
 	}
+}
+
+/* =====================
+   Responsive card tweaks (improve mobile appearance and maintain aspect ratio)
+   ===================== */
+
+.food-card {
+	/* ensure cards take available space in grid cells */
+	display: flex;
+	flex-direction: column;
+	justify-content: flex-start;
+}
+
+.food-card img {
+	/* prefer intrinsic sizing with a stable aspect ratio instead of a fixed px height */
+	height: auto !important;
+	aspect-ratio: 4 / 3;
+	max-height: 260px;
+	width: 100%;
+	border-radius: 12px;
+	object-fit: cover;
+}
+
+.food-card>p {
+	font-size: 18px;
+}
+
+.food-card>.price {
+	font-size: 16px;
+}
+
+@media (max-width:768px) {
+	.food-card {
+		padding: 12px;
+		border-radius: 16px;
+	}
+	.food-card img {
+		max-height: 180px;
+	}
+	.food-card>p { font-size: 16px; }
+	.food-card>.price { font-size: 15px; }
+	.food-card>.add-to-cart { padding: 12px; border-radius: 12px; }
+	.food-grid { gap: 16px; grid-template-columns: repeat(2, 1fr); }
+}
+
+@media (max-width:480px) {
+	.food-grid { grid-template-columns: 1fr; gap: 14px; }
+	.food-card img { max-height: 220px; }
+	.hero { padding: 60px 6%; }
 }
 
 /* Make combo-grid follow the same responsive breakpoints as food-grid */
@@ -605,9 +654,11 @@ h3 {
 /* QUOTE */
 
 .quote {
-	background: url("https://images.unsplash.com/photo-1414235077428-338989a2e8c0");
+	/* Use local banner image for the quote/banner section */
+	background-image: url("assets/banner.jpg");
 	background-size: cover;
-	padding: 100px;
+	background-position: center;
+	padding: 100px 6%;
 	display: flex;
 	justify-content: center;
 }
@@ -1229,6 +1280,24 @@ section {
 	flex: 1;
 	text-align: center;
 }
+
+/* Admin login floating link */
+.admin-login-link {
+	position: fixed;
+	right: 18px;
+	bottom: 18px;
+	background: var(--color-accent);
+	color: #fff;
+	padding: 10px 12px;
+	border-radius: 10px;
+	z-index: 9999;
+	text-decoration: none;
+	font-weight: 700;
+	box-shadow: 0 6px 20px rgba(0,0,0,0.12);
+}
+.admin-login-link:hover { background: var(--color-accent-hover); color: #fff; }
+
+@media(max-width:480px){ .admin-login-link { right: 12px; bottom: 12px; padding: 8px 10px; } }
 
 /* small improvements for accessibility */
 .modal-inner h2 {
