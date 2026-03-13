@@ -239,6 +239,9 @@
                     }
                 } catch (e) { console.warn('Error while attempting supabase fetch', e); }
 
+                // If we reach here, Supabase is not configured, so use fallback
+                fetchLocalFallback();
+
                 // fallback to inline JSON or static assets
                 function fetchLocalFallback() {
                     try {
@@ -280,6 +283,9 @@
                         return;
                     }
                 } catch (e) { console.warn('Error while attempting supabase fetch (home)', e); }
+
+                // If we reach here, Supabase is not configured, so use fallback
+                localHomeFallback();
 
                 function localHomeFallback() {
                     try { console.log('renderHomeProducts: attempting inline products-json fallback'); } catch (e) {}

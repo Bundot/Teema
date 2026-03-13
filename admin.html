@@ -3,8 +3,8 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>Teema — Admin Dashboard</title>
-  <link rel="stylesheet" href="admin.css">
+  <title>Teema — Admin Dashboard v15 (Logout Working)</title>
+  <link rel="stylesheet" href="admin.css?v=15">
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
 </head>
 <body>
@@ -19,11 +19,35 @@
     <nav class="admin-nav">
       <a href="#">Dashboard</a>
       <a href="#">Orders</a>
-      <a href="#">Logout</a>
+      <a href="#" id="logout-btn">Logout</a>
     </nav>
 
   </div>
 </header>
+
+<!-- IMMEDIATE DEBUG SCRIPT -->
+<script>
+  console.log('🔍 IMMEDIATE DEBUG: Page started loading');
+  console.log('📅 Current time:', new Date().toISOString());
+  console.log('🌐 Page URL:', window.location.href);
+  console.log('📋 Document ready state:', document.readyState);
+  
+  // Test if we can modify the page
+  document.addEventListener('DOMContentLoaded', function() {
+    console.log('📄 DOM Content Loaded - JavaScript is working!');
+    
+    // Add a visible indicator
+    const debugDiv = document.createElement('div');
+    debugDiv.style.cssText = 'position:fixed;top:10px;right:10px;background:green;color:white;padding:5px;z-index:9999;';
+    debugDiv.textContent = 'JS LOADED';
+    document.body.appendChild(debugDiv);
+    
+    setTimeout(() => {
+      debugDiv.style.background = 'orange';
+      debugDiv.textContent = 'JS RUNNING';
+    }, 1000);
+  });
+</script>
 
   <main class="container admin-main">
     <section class="panel">
@@ -125,47 +149,81 @@
   console.log('admin.html: static script loaded');
   </script>
 
+  <!-- Load Supabase configuration -->
+  <script>
+    // Supabase configuration for Teema
+    window.SUPABASE_URL = 'https://qnuznpihinvgzomddivo.supabase.co';
+    window.SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFudXpucGloaW52Z3pvbWRkaXZvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzMzOTc3NjYsImV4cCI6MjA4ODk3Mzc2Nn0.G9mYzgm5upwntLJW0sj-Uh3a2hTM-HbC1D4td0dgR8Y';
+    console.log('✅ Supabase config loaded directly in admin page');
+  </script>
+
+  <!-- Load Supabase client normally -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
   <script type="module">
-  // Admin frontend: support Supabase if window.SUPABASE_URL and window.SUPABASE_ANON are provided.
-  // Attempt to load a local config file `config/supabase.local.js` if present (this file is gitignored).
-  // If you prefer to set globals inline, you can still add a script tag before this module to set them.
-  // Example (not recommended for commits):
-  // <script>window.SUPABASE_URL='https://xyz.supabase.co'; window.SUPABASE_ANON='public-anon-key';</script>
-
-  // Try to load the local config (non-blocking). If the file does not exist, this will silently fail.
-  try {
-    const s = document.createElement('script');
-    s.src = 'config/supabase.local.js';
-    s.defer = true;
-    document.head.appendChild(s);
-  } catch (e) { console.debug('No local supabase config loaded', e); }
-
-  console.log('admin.module: about to import Supabase ESM client');
-  import('https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm').then(module => {
-    console.log('admin.module: Supabase ESM client imported');
-    const { createClient } = module;
-    const SUPABASE_URL = window.SUPABASE_URL || null;
-    const SUPABASE_ANON = window.SUPABASE_ANON || null;
-    const useSupabase = SUPABASE_URL && SUPABASE_ANON;
-    let supabase = null;
-    if (useSupabase) {
-      console.log('admin.module: creating Supabase client with provided keys', SUPABASE_URL, SUPABASE_ANON ? 'anon-present' : 'anon-missing');
-      supabase = createClient(SUPABASE_URL, SUPABASE_ANON);
-      console.info('Supabase client initialized for admin UI');
-      // Attempt to restore existing session saved by login page (supabase_session)
-      try {
-        const sessRaw = localStorage.getItem('supabase_session');
-        if (sessRaw) {
-          const sess = JSON.parse(sessRaw);
-          if (sess && sess.access_token && sess.refresh_token && supabase.auth && typeof supabase.auth.setSession === 'function') {
-            supabase.auth.setSession({ access_token: sess.access_token, refresh_token: sess.refresh_token });
-            console.info('Restored supabase session from localStorage');
-          }
+  console.log('🔍 MODULE SCRIPT STARTED');
+  console.log('📋 Supabase URL available:', !!window.SUPABASE_URL);
+  console.log('📋 Supabase ANON available:', !!window.SUPABASE_ANON);
+  
+  // Simple Supabase client creation (no dynamic import)
+  const { createClient } = supabase;
+  const SUPABASE_URL = window.SUPABASE_URL;
+  const SUPABASE_ANON = window.SUPABASE_ANON;
+  
+  let supabaseClient = null;
+  if (SUPABASE_URL && SUPABASE_ANON) {
+    supabaseClient = createClient(SUPABASE_URL, SUPABASE_ANON);
+    console.log("✅ Supabase client initialized");
+  } else {
+    console.log("❌ Supabase not configured");
+  }
+  
+  // Session check
+  if (supabaseClient) {
+    console.log('🔍 Starting session check...');
+    supabaseClient.auth.getSession().then(({ data: { session } }) => {
+      console.log('✅ Session check completed');
+      console.log('📋 Session data:', session ? 'found' : 'not found');
+      
+      if (session) {
+        console.info('✅ Active session found - user is authenticated');
+        console.log('👤 Authenticated user:', session.user.email);
+        console.log('🆔 User ID:', session.user.id);
+      } else {
+        console.warn('❌ No active session - redirecting to login');
+        console.log('🔄 Redirecting to login page...');
+        window.location.href = '/login.html';
+      }
+    }).catch(e => {
+      console.error('❌ Session check failed:', e);
+      console.log('🔄 Redirecting to login due to session error...');
+      window.location.href = '/login.html';
+    });
+  }
+  
+  // Logout functionality
+  const logoutBtn = document.getElementById('logout-btn');
+  if (logoutBtn) {
+    logoutBtn.addEventListener('click', async (e) => {
+      e.preventDefault();
+      console.log('🔐 Logout button clicked');
+      
+      if (supabaseClient) {
+        try {
+          console.log('🔄 Signing out from Supabase...');
+          await supabaseClient.auth.signOut();
+          console.log('✅ Successfully signed out');
+        } catch (error) {
+          console.error('❌ Sign out error:', error);
         }
-      } catch (e) { console.debug('Could not restore session from localStorage', e); }
-    } else {
-      console.info('Supabase not configured — admin will use localStorage simulation');
-    }
+      }
+      
+      console.log('🔄 Redirecting to home page...');
+      window.location.href = '/index.html';
+    });
+  } else {
+    console.warn('⚠️ Logout button not found');
+  }
 
     // keys for localStorage fallback
     const PRODUCTS_KEY = 'teema_products_sim';
@@ -195,40 +253,54 @@
 
     // Supabase helpers (if configured)
     async function dbFetchProducts() {
-      if (!supabase) return [];
-      const { data, error } = await supabase.from('products').select('*').order('created_at', { ascending: false });
+      if (!supabaseClient) return [];
+      const { data, error } = await supabaseClient.from('products').select('*').order('created_at', { ascending: false });
       if (error) { console.error(error); return []; }
       return data;
     }
     async function dbFetchCombos() {
-      if (!supabase) return [];
-      const { data, error } = await supabase.from('combos').select('*').order('created_at', { ascending: false });
+      if (!supabaseClient) return [];
+      const { data, error } = await supabaseClient.from('combos').select('*').order('created_at', { ascending: false });
       if (error) { console.error(error); return []; }
       return data;
     }
 
     async function dbInsertProduct(p) {
-      if (!supabase) return null;
-      const { data, error } = await supabase.from('products').insert([p]);
+      if (!supabaseClient) return null;
+      // Fix: Use correct schema fields (slug, image_url) and add .select()
+      const { data, error } = await supabaseClient.from('products').insert([{
+        slug: p.id,        // Frontend id becomes slug
+        name: p.name,
+        price: p.price,
+        sku: p.sku,
+        image_url: p.image // Frontend image becomes image_url
+      }]).select();
       if (error) throw error; return data && data[0];
     }
-    async function dbUpdateProduct(id, p) {
-      if (!supabase) return null;
-      const { data, error } = await supabase.from('products').update(p).eq('id', id);
+    async function dbUpdateProduct(slug, p) {
+      if (!supabaseClient) return null;
+      // Fix: Use slug for lookup and correct schema fields
+      const { data, error } = await supabaseClient.from('products').update({
+        name: p.name,
+        price: p.price,
+        sku: p.sku,
+        image_url: p.image
+      }).eq('slug', slug).select();
       if (error) throw error; return data && data[0];
     }
-    async function dbDeleteProduct(id) {
-      if (!supabase) return null;
-      const { data, error } = await supabase.from('products').delete().eq('id', id);
+    async function dbDeleteProduct(slug) {
+      if (!supabaseClient) return null;
+      // Fix: Use slug for lookup instead of id
+      const { data, error } = await supabaseClient.from('products').delete().eq('slug', slug).select();
       if (error) throw error; return data;
     }
 
     async function uploadImageToStorage(file, destPath) {
-      if (!supabase) return null;
+      if (!supabaseClient) return null;
       const bucket = 'product-images';
-      const { data, error } = await supabase.storage.from(bucket).upload(destPath, file, { cacheControl: '3600', upsert: false });
+      const { data, error } = await supabaseClient.storage.from(bucket).upload(destPath, file, { cacheControl: '3600', upsert: false });
       if (error) throw error;
-      const publicUrl = supabase.storage.from(bucket).getPublicUrl(destPath).publicURL;
+      const publicUrl = supabaseClient.storage.from(bucket).getPublicUrl(destPath).publicURL;
       return publicUrl;
     }
 
@@ -246,7 +318,7 @@
 
     // CRUD operations (use Supabase if configured, otherwise localStorage)
     async function loadData() {
-      if (supabase) {
+      if (supabaseClient) {
         try { products = await dbFetchProducts(); combos = await dbFetchCombos(); renderProductsLocal(); renderCombosLocal(); return; } catch (e) { console.error('Supabase load error', e); }
       }
       // fallback
@@ -261,43 +333,236 @@
     }
 
     async function addProduct() {
-      const id = String(formP.id.value || '').trim(); const name = String(formP.name.value || '').trim(); const price = Number(formP.price.value || 0); let image = String(formP.image.value || '').trim(); let sku = String(formP.sku.value || '').trim();
-      if (!id || !name) { showToast('Provide ID and name'); return; }
-      if (products.find(p => p.id === id)) { showToast('ID exists — use update'); return; }
+      console.log('🖱️ === ADD PRODUCT BUTTON CLICKED ===');
+      console.log('📋 Form Data Collection Start...');
+      
+      const id = String(formP.id.value || '').trim(); 
+      const name = String(formP.name.value || '').trim(); 
+      const price = Number(formP.price.value || 0); 
+      let image = String(formP.image.value || '').trim(); 
+      let sku = String(formP.sku.value || '').trim();
+      
+      console.log('📝 Form Values:');
+      console.log('   ID:', id || '(empty)');
+      console.log('   Name:', name || '(empty)');
+      console.log('   Price:', price);
+      console.log('   Image:', image || '(empty)');
+      console.log('   SKU:', sku || '(empty)');
+      
+      if (!id || !name) { 
+        console.log('❌ Validation Failed: Missing ID or name');
+        showToast('Provide ID and name'); 
+        return; 
+      }
+      
+      if (products.find(p => p.id === id)) { 
+        console.log('❌ Validation Failed: ID already exists:', id);
+        showToast('ID exists — use update'); 
+        return; 
+      }
+      
+      console.log('✅ Form validation passed');
+      
       // if file chosen and supabase configured, upload
       if (formP.file && formP.file.files && formP.file.files[0] && supabase) {
+        console.log('📤 Image upload detected...');
         try {
           const file = formP.file.files[0];
           const dest = `public/${Date.now()}-${file.name.replaceAll(/\s+/g,'_')}`;
+          console.log('📁 Uploading file:', file.name, 'to:', dest);
           image = await uploadImageToStorage(file, dest);
-        } catch (e) { console.error('upload error', e); showToast('Image upload failed'); }
+          console.log('✅ Image uploaded successfully:', image);
+        } catch (e) { 
+          console.error('❌ Upload error:', e); 
+          showToast('Image upload failed'); 
+        }
       }
-      if (!sku) sku = generateSku(id, name);
-      const item = { id, name, price, image, sku };
+      
+      if (!sku) {
+        sku = generateSku(id, name);
+        console.log('🏷️ Generated SKU:', sku);
+      }
+      
+      // Fix: Use correct field names for database
+      const item = { 
+        id: id,           // Frontend id (becomes slug in dbInsertProduct)
+        name: name, 
+        price: price, 
+        image: image,     // Frontend image (becomes image_url in dbInsertProduct)
+        sku: sku 
+      };
+      
+      console.log('📦 Product item prepared:', item);
+      
       if (supabase) {
-        try { await dbInsertProduct(item); showToast('Product added (supabase)'); await loadData(); clearProductForm(); return; } catch (e) { console.error(e); showToast('Error adding product'); }
+        console.log('🗄️ Attempting database insert...');
+        try { 
+          await dbInsertProduct(item); 
+          console.log('✅ Database insert successful');
+          showToast('Product added (supabase)'); 
+          console.log('🔄 Reloading data...');
+          await loadData(); 
+          console.log('✅ Data reloaded');
+          clearProductForm(); 
+          console.log('✅ Form cleared');
+          return; 
+        } catch (e) { 
+          console.error('❌ Database insert failed:', e); 
+          showToast('Error adding product: ' + e.message); 
+        }
       }
+      
       // fallback local
-      products.unshift(item); localSave(PRODUCTS_KEY, products); renderProductsLocal(); clearProductForm(); showToast('Product added (local)');
+      console.log('🔄 Using localStorage fallback...');
+      products.unshift(item); 
+      localSave(PRODUCTS_KEY, products); 
+      renderProductsLocal(); 
+      clearProductForm(); 
+      showToast('Product added (local)');
+      console.log('✅ Local storage operation complete');
     }
 
     async function updateProduct() {
-      const orig = formP.id.dataset.original || selectedProductId; if (!orig) { showToast('Select product'); return; }
-      const id = String(formP.id.value || '').trim(); const name = String(formP.name.value || '').trim(); const price = Number(formP.price.value || 0); let image = String(formP.image.value || '').trim(); let sku = String(formP.sku.value || '').trim();
-      if (!id || !name) { showToast('Provide ID and name'); return; }
-      if (formP.file && formP.file.files && formP.file.files[0] && supabase) {
-        try { const file = formP.file.files[0]; const dest = `public/${Date.now()}-${file.name.replaceAll(/\s+/g,'_')}`; image = await uploadImageToStorage(file, dest); } catch(e){console.error(e);}
+      console.log('🖱️ === UPDATE PRODUCT BUTTON CLICKED ===');
+      
+      const orig = formP.id.dataset.original || selectedProductId; 
+      console.log('📋 Original Product ID:', orig);
+      
+      if (!orig) { 
+        console.log('❌ No product selected for update');
+        showToast('Select product'); 
+        return; 
       }
-      const payload = { id, name, price, image, sku: sku || generateSku(id,name) };
-      if (supabase) { try { await dbUpdateProduct(orig, payload); showToast('Product updated (supabase)'); await loadData(); clearProductForm(); return; } catch(e){console.error(e); showToast('Error updating');} }
+      
+      const id = String(formP.id.value || '').trim(); 
+      const name = String(formP.name.value || '').trim(); 
+      const price = Number(formP.price.value || 0); 
+      let image = String(formP.image.value || '').trim(); 
+      let sku = String(formP.sku.value || '').trim();
+      
+      console.log('📝 Updated Form Values:');
+      console.log('   ID:', id || '(empty)');
+      console.log('   Name:', name || '(empty)');
+      console.log('   Price:', price);
+      console.log('   Image:', image || '(empty)');
+      console.log('   SKU:', sku || '(empty)');
+      
+      if (!id || !name) { 
+        console.log('❌ Validation Failed: Missing ID or name');
+        showToast('Provide ID and name'); 
+        return; 
+      }
+      
+      console.log('✅ Form validation passed');
+      
+      if (formP.file && formP.file.files && formP.file.files[0] && supabase) {
+        console.log('📤 New image upload detected...');
+        try { 
+          const file = formP.file.files[0]; 
+          const dest = `public/${Date.now()}-${file.name.replaceAll(/\s+/g,'_')}`; 
+          console.log('📁 Uploading new file:', file.name, 'to:', dest);
+          image = await uploadImageToStorage(file, dest); 
+          console.log('✅ New image uploaded successfully:', image);
+        } catch(e){ 
+          console.error('❌ Upload error:', e); 
+        }
+      }
+      
+      // Fix: Use correct field names for database
+      const payload = { 
+        id: id,           // Frontend id (becomes slug in dbUpdateProduct)
+        name: name, 
+        price: price, 
+        image: image,     // Frontend image (becomes image_url in dbUpdateProduct)
+        sku: sku || generateSku(id, name) 
+      };
+      
+      console.log('📦 Update payload prepared:', payload);
+      
+      if (supabase) { 
+        console.log('🗄️ Attempting database update...');
+        try { 
+          // Fix: Pass slug (orig) to dbUpdateProduct
+          await dbUpdateProduct(orig, payload); 
+          console.log('✅ Database update successful');
+          showToast('Product updated (supabase)'); 
+          console.log('🔄 Reloading data...');
+          await loadData(); 
+          console.log('✅ Data reloaded');
+          clearProductForm(); 
+          console.log('✅ Form cleared');
+          return; 
+        } catch(e){ 
+          console.error('❌ Database update failed:', e); 
+          showToast('Error updating: ' + e.message); 
+        }
+      }
+      
       // fallback
-      const idx = products.findIndex(p=>p.id===orig); if (idx!==-1) { products[idx]=payload; localSave(PRODUCTS_KEY, products); renderProductsLocal(); clearProductForm(); showToast('Product updated (local)'); }
+      console.log('🔄 Using localStorage fallback...');
+      const idx = products.findIndex(p=>p.id===orig); 
+      if (idx!==-1) { 
+        console.log('📝 Updating local product at index:', idx);
+        products[idx]=payload; 
+        localSave(PRODUCTS_KEY, products); 
+        renderProductsLocal(); 
+        clearProductForm(); 
+        showToast('Product updated (local)');
+        console.log('✅ Local storage update complete');
+      } else {
+        console.log('❌ Product not found in local storage');
+      }
     }
 
     async function deleteProduct(id) {
-      if (!confirm('Delete product ' + id + ' ?')) return;
-      if (supabase) { try { await dbDeleteProduct(id); showToast('Deleted (supabase)'); await loadData(); return; } catch(e){console.error(e); showToast('Error deleting');} }
-      products = products.filter(p=>p.id!==id); localSave(PRODUCTS_KEY, products); renderProductsLocal(); clearProductForm(); showToast('Deleted (local)');
+      console.log('🗑️ === DELETE PRODUCT FUNCTION CALLED ===');
+      console.log('📋 Product ID to delete:', id);
+      console.log('🔍 Looking for product in current list...');
+      
+      const productToDelete = products.find(p => p.id === id);
+      if (productToDelete) {
+        console.log('✅ Found product in list:', productToDelete.name);
+      } else {
+        console.log('❌ Product not found in current list');
+      }
+      
+      if (!confirm('Delete product ' + id + ' ?')) {
+        console.log('❌ User cancelled deletion');
+        return;
+      }
+      console.log('✅ User confirmed deletion');
+      
+      if (supabase) { 
+        console.log('�️ Attempting Supabase delete...');
+        try { 
+          console.log('🔄 Calling dbDeleteProduct with slug:', id);
+          // Fix: Pass slug (id) to dbDeleteProduct
+          await dbDeleteProduct(id); 
+          console.log('✅ Supabase delete successful');
+          showToast('Deleted (supabase)'); 
+          console.log('🔄 Reloading data...');
+          await loadData(); 
+          console.log('✅ Data reloaded after deletion');
+          return; 
+        } catch(e) { 
+          console.error('❌ Supabase delete error:', e); 
+          showToast('Error deleting: ' + e.message); 
+          console.log('🔄 Falling back to localStorage...');
+        }
+      }
+      
+      // 🔄 LOCAL FALLBACK: Use localStorage
+      console.log('🔄 Using localStorage fallback for delete...');
+      const originalLength = products.length;
+      products = products.filter(p=>p.id!==id); 
+      const newLength = products.length;
+      console.log('📊 Products before:', originalLength, 'after:', newLength);
+      
+      localSave(PRODUCTS_KEY, products); 
+      renderProductsLocal(); 
+      clearProductForm(); 
+      showToast('Deleted (local)');
+      console.log('✅ Local storage delete complete');
     }
 
     async function addCombo() {
@@ -328,14 +593,109 @@
     function clearComboForm(){ formC.id.value=formC.title.value=formC.desc.value=formC.image.value=formC.items.value=''; formC.id.dataset.original=''; selectedComboId=null; $('.items-list .item.selected')?.classList?.remove('selected'); }
 
     function setSelectedListItem(listEl, li){ listEl.querySelectorAll('.item').forEach(x=>x.classList.remove('selected')); li.classList.add('selected'); }
-    function selectProduct(id){ const p = products.find(x=>x.id===id); if(!p) return; formP.id.value=p.id; formP.name.value=p.name; formP.price.value=p.price; formP.image.value=p.image||p.image_url||''; formP.sku.value=p.sku||''; formP.id.dataset.original=p.id; selectedProductId=p.id; showToast('Loaded'); }
+    function selectProduct(id){ 
+      console.log('📝 selectProduct called with ID:', id);
+      const p = products.find(x=>x.id===id); 
+      if(!p) {
+        console.error('❌ Product not found with ID:', id);
+        return;
+      }
+      console.log('✅ Found product:', p);
+      
+      formP.id.value=p.id; 
+      formP.name.value=p.name; 
+      formP.price.value=p.price; 
+      formP.image.value=p.image||p.image_url||''; 
+      formP.sku.value=p.sku||''; 
+      formP.id.dataset.original=p.id; 
+      selectedProductId=p.id; 
+      
+      console.log('📋 Form populated with product data');
+      console.log('   ID:', p.id);
+      console.log('   Name:', p.name);
+      console.log('   Price:', p.price);
+      console.log('   SKU:', p.sku);
+      
+      showToast('Loaded'); 
+    }
     function selectCombo(id){ const c = combos.find(x=>x.id===id); if(!c) return; formC.id.value=c.id; formC.title.value=c.title; formC.desc.value=c.description||''; formC.image.value=c.image||c.image_url||''; formC.items.value=(c.items||[]).join(', '); formC.id.dataset.original=c.id; selectedComboId=c.id; showToast('Loaded'); }
 
     function bindUi(){
-      productsListEl.addEventListener('click', ev=>{ const btn=ev.target.closest('button'); const li=ev.target.closest('li.item'); if(!li) return; const id=li.dataset.id; if(btn){ if(btn.classList.contains('edit')) selectProduct(id); else if(btn.classList.contains('del')) deleteProduct(id); } else { setSelectedListItem(productsListEl, li); selectProduct(id); } });
-      combosListEl.addEventListener('click', ev=>{ const btn=ev.target.closest('button'); const li=ev.target.closest('li.item'); if(!li) return; const id=li.dataset.id; if(btn){ if(btn.classList.contains('edit')) selectCombo(id); else if(btn.classList.contains('del')) deleteCombo(id); } else { setSelectedListItem(combosListEl, li); selectCombo(id); } });
-      formP.addBtn.addEventListener('click', addProduct); formP.updateBtn.addEventListener('click', updateProduct); formP.deleteBtn.addEventListener('click', ()=>{ if(selectedProductId) deleteProduct(selectedProductId); });
-      formC.addBtn.addEventListener('click', addCombo); formC.updateBtn.addEventListener('click', updateCombo); formC.deleteBtn.addEventListener('click', ()=>{ if(selectedComboId) deleteCombo(selectedComboId); });
+      console.log('🔧 Binding UI event listeners...');
+      console.log('Products list element:', productsListEl ? '✅' : '❌');
+      console.log('Combos list element:', combosListEl ? '✅' : '❌');
+      
+      productsListEl.addEventListener('click', ev=>{ 
+        const btn=ev.target.closest('button'); 
+        const li=ev.target.closest('li.item'); 
+        if(!li) return; 
+        const id=li.dataset.id; 
+        console.log('🖱️ Product click detected:', { id, btn: btn?.className, li: li?.className });
+        
+        if(btn){ 
+          if(btn.classList.contains('edit')) {
+            console.log('✅ Edit button clicked for product:', id);
+            selectProduct(id); 
+          } else if(btn.classList.contains('del')) {
+            console.log('✅ Delete button clicked for product:', id);
+            deleteProduct(id); 
+          }
+        } else { 
+          setSelectedListItem(productsListEl, li); 
+          selectProduct(id); 
+        } 
+      });
+      
+      combosListEl.addEventListener('click', ev=>{ 
+        const btn=ev.target.closest('button'); 
+        const li=ev.target.closest('li.item'); 
+        if(!li) return; 
+        const id=li.dataset.id; 
+        console.log('🖱️ Combo click detected:', { id, btn: btn?.className, li: li?.className });
+        
+        if(btn){ 
+          if(btn.classList.contains('edit')) {
+            console.log('✅ Edit button clicked for combo:', id);
+            selectCombo(id); 
+          } else if(btn.classList.contains('del')) {
+            console.log('✅ Delete button clicked for combo:', id);
+            deleteCombo(id); 
+          }
+        } else { 
+          setSelectedListItem(combosListEl, li); 
+          selectCombo(id); 
+        } 
+      });
+      
+      formP.addBtn.addEventListener('click', addProduct); 
+      formP.updateBtn.addEventListener('click', updateProduct); 
+      formP.deleteBtn.addEventListener('click', ()=>{ 
+        console.log('🖱️ === DELETE SELECTED BUTTON CLICKED ===');
+        console.log('📋 Selected Product ID:', selectedProductId);
+        if(selectedProductId) {
+          console.log('✅ Proceeding with delete operation for:', selectedProductId);
+          deleteProduct(selectedProductId); 
+        } else {
+          console.log('❌ No product selected for deletion');
+          showToast('Select a product first');
+        }
+      });
+      
+      formC.addBtn.addEventListener('click', addCombo); 
+      formC.updateBtn.addEventListener('click', updateCombo); 
+      formC.deleteBtn.addEventListener('click', ()=>{ 
+        console.log('🖱️ === DELETE COMBO BUTTON CLICKED ===');
+        console.log('📋 Selected Combo ID:', selectedComboId);
+        if(selectedComboId) {
+          console.log('✅ Proceeding with delete operation for:', selectedComboId);
+          deleteCombo(selectedComboId); 
+        } else {
+          console.log('❌ No combo selected for deletion');
+          showToast('Select a combo first');
+        }
+      });
+      
+      console.log('✅ UI event listeners bound successfully');
     }
 
     // generate SKU
@@ -343,18 +703,26 @@
 
     // init
     (async function init(){
-      console.log('admin.module: init starting - about to load data');
+      console.log('🚀 ADMIN PAGE INITIALIZATION START');
+      console.log('📅 Timestamp:', new Date().toISOString());
+      console.log('🌐 URL:', window.location.href);
+      console.log('🔑 Supabase configured:', !!supabase);
+      
+      console.log('📦 Step 1: Loading data from database...');
       await loadData();
-      console.log('admin.module: loadData completed - binding UI');
+      console.log('✅ Step 1 Complete: Data loaded');
+      
+      console.log('🖱️ Step 2: Binding UI event listeners...');
       bindUi();
+      console.log('✅ Step 2 Complete: UI event listeners bound');
+      
+      console.log('🎯 Step 3: Finalizing initialization...');
       showToast('Admin ready', 900);
-      console.log('admin.module: init finished');
+      console.log('✅ ADMIN PAGE INITIALIZATION COMPLETE');
+      console.log('📊 Products loaded:', products.length);
+      console.log('🍱 Combos loaded:', combos.length);
+      console.log('🎉 Admin dashboard is ready for use!');
     })();
-
-    // small helpers to use $ inside module
-    function $(sel){ return document.querySelector(sel); }
-
-  }).catch(err=>{ console.error('Could not load supabase client', err); });
   </script>
 </body>
 </html>
