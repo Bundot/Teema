@@ -55,11 +55,13 @@
     // Configuration will be loaded from environment variables in production
     // For local development, dev-env.js sets up environment variables
     
-    // Re-initialize if config is invalid (development fallback)
-    if (window.TEEMA_CONFIG && !window.TEEMA_CONFIG.isValid && typeof window.TEEMA_CONFIG.reinit === 'function') {
-      console.warn('⚠️ Configuration invalid - check your .env file');
-      window.TEEMA_CONFIG.reinit();
-    }
+    // Wait for configuration to load, then check if reinit is needed
+    setTimeout(() => {
+      if (window.TEEMA_CONFIG && !window.TEEMA_CONFIG.isValid && typeof window.TEEMA_CONFIG.reinit === 'function') {
+        console.warn('⚠️ Configuration invalid - check your .env file');
+        window.TEEMA_CONFIG.reinit();
+      }
+    }, 200);
   </script>
   <script>
     console.log('✅ Supabase config loaded directly in login page');
@@ -71,19 +73,39 @@
     // Enhanced login script with better error handling
     console.log('🔐 Login script starting...');
     
-    // Check configuration first
-    const SUPABASE_URL = window.SUPABASE_URL || null;
-    const SUPABASE_ANON = window.SUPABASE_ANON || null;
+    // Wait for configuration to be loaded
+    function waitForConfig() {
+      return new Promise((resolve) => {
+        const checkConfig = () => {
+          const SUPABASE_URL = window.SUPABASE_URL || (window.TEEMA_CONFIG && window.TEEMA_CONFIG.SUPABASE_URL);
+          const SUPABASE_ANON = window.SUPABASE_ANON || (window.TEEMA_CONFIG && window.TEEMA_CONFIG.SUPABASE_ANON);
+          
+          if (SUPABASE_URL && SUPABASE_ANON) {
+            resolve({ SUPABASE_URL, SUPABASE_ANON });
+          } else if (window.TEEMA_CONFIG && window.TEEMA_CONFIG.isValid) {
+            resolve({ 
+              SUPABASE_URL: window.TEEMA_CONFIG.SUPABASE_URL, 
+              SUPABASE_ANON: window.TEEMA_CONFIG.SUPABASE_ANON 
+            });
+          } else {
+            setTimeout(checkConfig, 100);
+          }
+        };
+        checkConfig();
+      });
+    }
     
-    console.log('📋 Configuration check:');
-    console.log('SUPABASE_URL:', SUPABASE_URL ? '✅' : '❌');
-    console.log('SUPABASE_ANON:', SUPABASE_ANON ? '✅' : '❌');
-    
-    if(!SUPABASE_URL || !SUPABASE_ANON) {
-      console.error('❌ Supabase configuration missing');
-      document.getElementById('msg').textContent = 'Supabase not configured - check console';
-      // Exit early instead of return
-    } else {
+    waitForConfig().then(({ SUPABASE_URL, SUPABASE_ANON }) => {
+      console.log('📋 Configuration check:');
+      console.log('SUPABASE_URL:', SUPABASE_URL ? '✅' : '❌');
+      console.log('SUPABASE_ANON:', SUPABASE_ANON ? '✅' : '❌');
+      
+      if(!SUPABASE_URL || !SUPABASE_ANON) {
+        console.error('❌ Supabase configuration missing');
+        document.getElementById('msg').textContent = 'Supabase not configured - check console';
+        return;
+      }
+      
       console.log('📦 Importing Supabase client...');
       import('https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm').then(mod=>{
         console.log('✅ Supabase client imported');
@@ -192,7 +214,22 @@
           showError('Could not load authentication service: ' + e.message);
         }
       });
-    }
+    }).catch(err => {
+      console.error('❌ Configuration loading failed:', err);
+      if (document.getElementById('msg')) {
+        document.getElementById('msg').textContent = 'Failed to load configuration';
+      }
+    });
+    
+    // Also handle case where config never loads
+    setTimeout(() => {
+      if (!window.SUPABASE_URL && !window.SUPABASE_ANON && (!window.TEEMA_CONFIG || !window.TEEMA_CONFIG.isValid)) {
+        console.error('❌ Configuration failed to load after timeout');
+        if (document.getElementById('msg')) {
+          document.getElementById('msg').textContent = 'Configuration failed to load - refresh page';
+        }
+      }
+    }, 5000);
   </script>
 </body>
 </html>

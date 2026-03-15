@@ -34,7 +34,12 @@ EOF
 for html_file in *.html; do
     if [ -f "$html_file" ]; then
         echo "📝 Processing $html_file..."
-        sed -i.tmp 's/<script src="dev-env.js"><\/script>/<script src="env-inject.js"><\/script>/g' "$html_file"
+        # Replace both <script src="dev-env.js"></script> and variations
+        sed -i.tmp \
+            -e 's/<script src="dev-env.js"><\/script>/<script src="env-inject.js"><\/script>/g' \
+            -e 's/<script src="dev-env.js" ><\/script>/<script src="env-inject.js"><\/script>/g' \
+            -e 's/<script src="dev-env.js"[^>]*><\/script>/<script src="env-inject.js"><\/script>/g' \
+            "$html_file"
         rm -f "$html_file.tmp"
     fi
 done

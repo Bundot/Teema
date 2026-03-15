@@ -31,15 +31,32 @@
     } else if (typeof window !== 'undefined' && window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1') {
         // Production browser environment - check if variables were injected during build
         // Vercel injects environment variables as global variables during build
-        if (typeof window.SUPABASE_URL !== 'undefined' && window.SUPABASE_URL) {
-            config.SUPABASE_URL = window.SUPABASE_URL;
-            config.SUPABASE_ANON = window.SUPABASE_ANON;
-            config.SUPABASE_SERVICE_KEY = window.SUPABASE_SERVICE_KEY || config.SUPABASE_SERVICE_KEY;
-            config.NODE_ENV = 'production';
-            config.ENABLE_CONSOLE_LOGS = false;
-            
-            console.log('🌍 Production environment variables detected from build injection');
-        }
+        // Use a small delay to ensure env-inject.js has loaded
+        setTimeout(() => {
+            if (typeof window.SUPABASE_URL !== 'undefined' && window.SUPABASE_URL) {
+                config.SUPABASE_URL = window.SUPABASE_URL;
+                config.SUPABASE_ANON = window.SUPABASE_ANON;
+                config.SUPABASE_SERVICE_KEY = window.SUPABASE_SERVICE_KEY || config.SUPABASE_SERVICE_KEY;
+                config.NODE_ENV = 'production';
+                config.ENABLE_CONSOLE_LOGS = false;
+                
+                console.log('🌍 Production environment variables detected from build injection');
+                
+                // Re-validate and update config
+                const errors = validateConfig();
+                if (errors.length === 0) {
+                    window.TEEMA_CONFIG.isValid = true;
+                    window.TEEMA_CONFIG.errors = [];
+                    window.TEEMA_CONFIG.SUPABASE_URL = config.SUPABASE_URL;
+                    window.TEEMA_CONFIG.SUPABASE_ANON = config.SUPABASE_ANON;
+                    window.TEEMA_CONFIG.SUPABASE_SERVICE_KEY = config.SUPABASE_SERVICE_KEY;
+                    window.TEEMA_CONFIG.NODE_ENV = config.NODE_ENV;
+                    window.TEEMA_CONFIG.ENABLE_CONSOLE_LOGS = config.ENABLE_CONSOLE_LOGS;
+                    
+                    console.log('✅ Configuration updated with production values');
+                }
+            }
+        }, 100);
     }
     
     // Try to load from window config (fallback for browser environment)
