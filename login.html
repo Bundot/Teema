@@ -8,6 +8,9 @@
   <meta http-equiv="Expires" content="0">
   <title>Teema — Admin Login</title>
   <link rel="stylesheet" href="login.css">
+  <!-- Security scripts -->
+  <script src="config-loader.js"></script>
+  <script src="secure-storage.js"></script>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
@@ -43,11 +46,21 @@
     </div>
   </div>
   
-  <!-- Load Supabase configuration -->
+  <!-- Security scripts -->
+  <script src="config-loader.js"></script>
+  <script src="secure-storage.js"></script>
   <script>
-    // Supabase configuration for Teema
-    window.SUPABASE_URL = 'https://qnuznpihinvgzomddivo.supabase.co';
-    window.SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFudXpucGloaW52Z3pvbWRkaXZvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzMzOTc3NjYsImV4cCI6MjA4ODk3Mzc2Nn0.G9mYzgm5upwntLJW0sj-Uh3a2hTM-HbC1D4td0dgR8Y';
+    // Production-ready: No hardcoded credentials
+    // Configuration will be loaded from environment variables in production
+    // For local development, ensure .env file is properly configured
+    
+    // Re-initialize if config is invalid (development fallback)
+    if (window.TEEMA_CONFIG && !window.TEEMA_CONFIG.isValid && typeof window.TEEMA_CONFIG.reinit === 'function') {
+      console.warn('⚠️ Configuration invalid - check your .env file');
+      window.TEEMA_CONFIG.reinit();
+    }
+  </script>
+  <script>
     console.log('✅ Supabase config loaded directly in login page');
     console.log('SUPABASE_URL:', window.SUPABASE_URL ? '✅' : '❌');
     console.log('SUPABASE_ANON:', window.SUPABASE_ANON ? '✅' : '❌');

@@ -1,0 +1,30 @@
+# Security Headers Configuration
+# Add these headers to your web server configuration
+
+# Content Security Policy (CSP)
+# Prevents XSS and other injection attacks
+Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https:; connect-src 'self' https://qnuznpihinvgzomddivo.supabase.co; frame-ancestors 'none'; base-uri 'self'; form-action 'self';
+
+# HTTP Strict Transport Security (HSTS)
+# Enforces HTTPS connections
+Strict-Transport-Security: max-age=31536000; includeSubDomains; preload
+
+# X-Frame-Options
+# Prevents clickjacking attacks
+X-Frame-Options: DENY
+
+# X-Content-Type-Options
+# Prevents MIME-type sniffing
+X-Content-Type-Options: nosniff
+
+# X-XSS-Protection
+# Enables XSS filtering in browsers
+X-XSS-Protection: 1; mode=block
+
+# Referrer Policy
+# Controls how much referrer information is sent
+Referrer-Policy: strict-origin-when-cross-origin
+
+# Permissions Policy
+# Controls browser feature access
+Permissions-Policy: geolocation=(), microphone=(), camera=(), payment=(), usb=(), magnetometer=(), gyroscope=()

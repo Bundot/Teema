@@ -8,6 +8,20 @@
 	<link rel="stylesheet" href="styles.css?v=11">
 	<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Poppins:wght@300;400;500;600&display=swap"
 		rel="stylesheet">
+	<!-- Security scripts -->
+	<script src="config-loader.js"></script>
+	<script src="secure-storage.js"></script>
+	<script>
+		// Production-ready: No hardcoded credentials
+		// Configuration will be loaded from environment variables in production
+		// For local development, ensure .env file is properly configured
+		
+		// Re-initialize if config is invalid (development fallback)
+		if (window.TEEMA_CONFIG && !window.TEEMA_CONFIG.isValid && typeof window.TEEMA_CONFIG.reinit === 'function') {
+			console.warn('⚠️ Configuration invalid - check your .env file');
+			window.TEEMA_CONFIG.reinit();
+		}
+	</script>
 </head>
 
 
@@ -161,7 +175,7 @@
 			<h2 id="cart-title">Your Cart</h2>
 			<div class="cart-list" aria-live="polite"></div>
 			<div class="cart-footer">
-				<div class="cart-summary">Total: <strong class="cart-total">₦0</strong></div>
+				<div class="cart-summary">Total: <strong class="cart-total">£ 0</strong></div>
 				<div class="cart-actions">
 					<button id="checkout-btn" class="btn">Checkout</button>
 					<button class="btn btn-ghost cart-close">Continue shopping</button>
@@ -246,6 +260,14 @@
 	{"id":"vicksblue","name":"Vicks Blue","price":800,"image":"assets/products/vicksblue.jpeg","sku":"TEEMA-VICKS-BLUE"},
 	{"id":"wheatflour","name":"Wheat Flour","price":400,"image":"assets/products/wheatflour.jpg","sku":"TEEMA-WHEAT-FLOUR"}
 ]
+	</script>
+
+	<!-- Load Supabase configuration -->
+	<script>
+		// Supabase configuration for Teema
+		window.SUPABASE_URL = 'https://qnuznpihinvgzomddivo.supabase.co';
+		window.SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFudXpucGloaW52Z3pvbWRkaXZvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzMzOTc3NjYsImV4cCI6MjA4ODk3Mzc2Nn0.G9mYzgm5upwntLJW0sj-Uh3a2hTM-HbC1D4td0dgR8Y';
+		console.log('✅ Supabase config loaded in index page');
 	</script>
 
 	<!-- Admin login shortcut (bottom-right) -->

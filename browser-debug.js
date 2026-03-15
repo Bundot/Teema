@@ -64,11 +64,11 @@ Object.defineProperty(window.location, 'href', {
 
 console.log('🎯 Debugging setup complete!');
 console.log('📝 Now click "Sign in" and watch the console for detailed logs');
-console.log('📧 Fill in: isaacdauda12@gmail.com / @Natan1234');
+console.log('📧 Fill in:    /    ');
 
 // Auto-fill the form for easier testing
 if (emailInput && passwordInput) {
-  emailInput.value = 'isaacdauda12@gmail.com';
-  passwordInput.value = '@Natan1234';
+  emailInput.value = '  ';
+  passwordInput.value = '   ';
   console.log('📝 Form auto-filled with your credentials');
 }

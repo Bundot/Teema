@@ -19,19 +19,39 @@
     let toastTimer = null;
     function showToast(message, actionText, actionCallback, duration = 3000) {
         if (!toastEl) return;
-        toastEl.innerHTML = '';
-        const msg = document.createElement('div'); msg.textContent = message;
+        
+        // Clear toast safely
+        while (toastEl.firstChild) {
+            toastEl.removeChild(toastEl.firstChild);
+        }
+        
+        const msg = document.createElement('div'); 
+        msg.textContent = message; // Safe textContent instead of innerHTML
         toastEl.appendChild(msg);
+        
         if (actionText && actionCallback) {
-            const act = document.createElement('button'); act.className = 'toast-action'; act.textContent = actionText;
+            const act = document.createElement('button'); 
+            act.className = 'toast-action'; 
+            act.textContent = actionText;
             act.addEventListener('click', () => { actionCallback(); hideToast(); });
             toastEl.appendChild(act);
         }
-        toastEl.hidden = false; requestAnimationFrame(() => toastEl.classList.add('show'));
+        toastEl.hidden = false; 
+        requestAnimationFrame(() => toastEl.classList.add('show'));
         if (toastTimer) clearTimeout(toastTimer);
         toastTimer = setTimeout(hideToast, duration);
     }
-    function hideToast() { if (!toastEl) return; toastEl.classList.remove('show'); toastTimer = setTimeout(() => { toastEl.hidden = true; toastEl.innerHTML = ''; }, 220); }
+    function hideToast() { 
+        if (!toastEl) return; 
+        toastEl.classList.remove('show'); 
+        toastTimer = setTimeout(() => { 
+            toastEl.hidden = true; 
+            // Clear toast safely
+            while (toastEl.firstChild) {
+                toastEl.removeChild(toastEl.firstChild);
+            }
+        }, 220); 
+    }
 
     // Modal helpers
     function openModal() { if (!modal) return; modal.setAttribute('aria-hidden', 'false'); modal.classList.add('open'); const closeBtn = modal.querySelector('.modal-close'); if (closeBtn) closeBtn.focus(); }
@@ -73,14 +93,41 @@
     const sections = document.querySelectorAll('.fade-in'); if (sections && sections.length) { const sectionObserver = new IntersectionObserver(entries => { entries.forEach(entry => { if (entry.isIntersecting) { entry.target.classList.add('in-view'); sectionObserver.unobserve(entry.target); } }); }, { threshold: 0.02 }); sections.forEach(s => sectionObserver.observe(s)); }
 
     /* Cart implementation */
-    const DELIVERY_FEE = 500; // flat delivery fee (₦)
+    const DELIVERY_FEE = 500; // flat delivery fee (£ )
     const CART_KEY = 'teema_cart_v1';
     let cart = {};
 
-    function loadCart() { try { const raw = localStorage.getItem(CART_KEY); cart = raw ? JSON.parse(raw) : {}; } catch (e) { cart = {}; } updateCartBadge(); }
-    function saveCart() { localStorage.setItem(CART_KEY, JSON.stringify(cart)); updateCartBadge(); }
+    function loadCart() { 
+        try { 
+            // Use secure storage if available, fallback to localStorage
+            if (window.SecureStorage) {
+                cart = window.SecureStorage.getCart();
+            } else {
+                const raw = localStorage.getItem(CART_KEY); 
+                cart = raw ? JSON.parse(raw) : {}; 
+            }
+        } catch (e) { 
+            console.error('Cart load error:', e);
+            cart = {}; 
+        } 
+        updateCartBadge(); 
+    }
+    
+    function saveCart() { 
+        try {
+            // Use secure storage if available, fallback to localStorage
+            if (window.SecureStorage) {
+                window.SecureStorage.setCart(cart);
+            } else {
+                localStorage.setItem(CART_KEY, JSON.stringify(cart));
+            }
+            updateCartBadge(); 
+        } catch (e) {
+            console.error('Cart save error:', e);
+        }
+    }
     function updateCartBadge() { const badgeEls = document.querySelectorAll('.cart-badge'); const count = Object.values(cart).reduce((s, i) => s + (i.quantity || 0), 0); badgeEls.forEach(el => el.textContent = count); }
-    function formatNGN(n) { return '₦' + Number(n).toLocaleString('en-NG'); }
+    function formatNGN(n) { return '£ ' + Number(n).toLocaleString('en-NG'); }
 
     function addToCartItem(id, name, price, image, sku) { if (!id) return; if (!cart[id]) cart[id] = { id, name, price: Number(price || 0), image: image || '', sku: sku || '', quantity: 1 }; else cart[id].quantity = (cart[id].quantity || 0) + 1; saveCart(); }
     function removeCartItem(id) { delete cart[id]; saveCart(); }
@@ -95,28 +142,90 @@
 
     function renderCart() {
         if (!cartList) return;
-        cartList.innerHTML = '';
+        
+        // Clear cart list safely
+        while (cartList.firstChild) {
+            cartList.removeChild(cartList.firstChild);
+        }
+        
         const items = Object.values(cart);
         if (items.length === 0) {
-            cartList.innerHTML = '<div class="empty">Your cart is empty.</div>';
+            const emptyDiv = document.createElement('div');
+            emptyDiv.className = 'empty';
+            emptyDiv.textContent = 'Your cart is empty.';
+            cartList.appendChild(emptyDiv);
         } else {
             items.forEach(item => {
-                                const el = document.createElement('div');
-                                el.className = 'cart-item';
-                                el.innerHTML = `
-                                        <img src="${item.image || 'https://via.placeholder.com/64'}" alt="${item.name}">
-                                        <div class="meta">
-                                            <h4>${item.name}</h4>
-                                            <div class="sku">SKU: ${item.sku || 'N/A'}</div>
-                                            <div class="price">${formatNGN(item.price)}</div>
-                                        </div>
-                    <div class="controls">
-                      <button class="qty-btn" data-action="dec" data-id="${item.id}">-</button>
-                      <input class="qty-input" data-id="${item.id}" value="${item.quantity}" style="width:44px;text-align:center;padding:6px;border-radius:6px;border:1px solid #e6e6e6">
-                      <button class="qty-btn" data-action="inc" data-id="${item.id}">+</button>
-                      <button class="remove-item" data-id="${item.id}" aria-label="Remove ${item.name}">Remove</button>
-                    </div>
-                `;
+                const el = document.createElement('div');
+                el.className = 'cart-item';
+                
+                // Create safe HTML structure
+                const img = document.createElement('img');
+                img.src = item.image || 'https://via.placeholder.com/64';
+                img.alt = item.name; // Safe alt text
+                img.loading = 'lazy';
+                
+                const metaDiv = document.createElement('div');
+                metaDiv.className = 'meta';
+                
+                const nameHeader = document.createElement('h4');
+                nameHeader.textContent = item.name;
+                
+                const pricePara = document.createElement('p');
+                pricePara.textContent = formatNGN(item.price);
+                
+                const quantityDiv = document.createElement('div');
+                quantityDiv.className = 'quantity-controls';
+                
+                const minusBtn = document.createElement('button');
+                minusBtn.textContent = '-';
+                minusBtn.setAttribute('aria-label', 'Decrease quantity');
+                
+                const quantitySpan = document.createElement('span');
+                quantitySpan.textContent = item.quantity || 1;
+                
+                const plusBtn = document.createElement('button');
+                plusBtn.textContent = '+';
+                plusBtn.setAttribute('aria-label', 'Increase quantity');
+                
+                const removeBtn = document.createElement('button');
+                removeBtn.textContent = 'Remove';
+                removeBtn.className = 'remove-btn';
+                removeBtn.setAttribute('aria-label', 'Remove item from cart');
+                
+                // Assemble the structure
+                quantityDiv.appendChild(minusBtn);
+                quantityDiv.appendChild(quantitySpan);
+                quantityDiv.appendChild(plusBtn);
+                
+                metaDiv.appendChild(nameHeader);
+                metaDiv.appendChild(pricePara);
+                metaDiv.appendChild(quantityDiv);
+                metaDiv.appendChild(removeBtn);
+                
+                el.appendChild(img);
+                el.appendChild(metaDiv);
+                
+                // Add event listeners
+                minusBtn.addEventListener('click', () => {
+                    const newQty = (item.quantity || 1) - 1;
+                    if (newQty > 0) {
+                        setItemQuantity(item.id, newQty);
+                        renderCart();
+                    }
+                });
+                
+                plusBtn.addEventListener('click', () => {
+                    const newQty = (item.quantity || 1) + 1;
+                    setItemQuantity(item.id, newQty);
+                    renderCart();
+                });
+                
+                removeBtn.addEventListener('click', () => {
+                    removeCartItem(item.id);
+                    renderCart();
+                });
+                
                 cartList.appendChild(el);
             });
         }
@@ -307,7 +416,7 @@
         // map DB row to product shape used by createProductCard
         function mapDbToProduct(row) {
             return {
-                id: row.slug || row.id,
+                id: row.id,     // Use primary key 'id' for updates/deletes
                 name: row.name || row.title || '',
                 price: Number(row.price || 0),
                 image: row.image_url || row.image || '',

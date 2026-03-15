@@ -139,7 +139,7 @@
       <h2 id="cart-title">Your Cart</h2>
       <div class="cart-list" aria-live="polite"></div>
       <div class="cart-footer">
-        <div class="cart-summary">Total: <strong class="cart-total">₦0</strong></div>
+        <div class="cart-summary">Total: <strong class="cart-total">£ 0</strong></div>
         <div class="cart-actions">
           <button id="checkout-btn" class="btn">Checkout</button>
           <button class="btn btn-ghost cart-close">Continue shopping</button>
@@ -162,6 +162,14 @@
     </div>
     <div class="modal-backdrop" tabindex="-1" data-close="success-backdrop"></div>
   </div>
+
+  <!-- Load Supabase configuration -->
+  <script>
+    // Supabase configuration for Teema
+    window.SUPABASE_URL = 'https://qnuznpihinvgzomddivo.supabase.co';
+    window.SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFudXpucGloaW52Z3pvbWRkaXZvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzMzOTc3NjYsImV4cCI6MjA4ODk3Mzc2Nn0.G9mYzgm5upwntLJW0sj-Uh3a2hTM-HbC1D4td0dgR8Y';
+    console.log('✅ Supabase config loaded in products page');
+  </script>
 
   <script src="script.js?v=5"></script>
 </body>

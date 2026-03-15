@@ -1,5 +1,6 @@
 .DS_Store
 .env
+.env.production
 node_modules/
 .vscode/
 .idea/
@@ -7,3 +8,40 @@ node_modules/
 # Local Supabase config (contains anon key) — do not commit
 config/supabase.local.js
 config/supabase.js
+
+# Test scripts and documentation (do not commit to production)
+*-test*.js
+*test*.js
+automated-admin-test.js
+auto-fix-test.js
+run-auto-fix.js
+robust-fix.js
+test-primary-key-fix.js
+browser-debug.js
+login-debug.js
+check-schema.js
+verify-database-test.js
+field-mapping-test.js
+
+# Documentation files (keep local reference)
+*.md
+SECURITY_SUMMARY.md
+ENVIRONMENT_SETUP.md
+DEPLOYMENT_CHECKLIST.md
+IMAGE_UPLOAD_SETUP.md
+
+# Production build artifacts
+vercel.json.prod
+.htaccess.prod
+config/supabase.prod.js
+
+# Backup files
+*.backup
+*.bak
+*.tmp
+
+# Logs and runtime files
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
