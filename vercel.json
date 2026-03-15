@@ -13,12 +13,5 @@
       "src": "/(.*)",
       "dest": "/$1"
     }
-  ],
-  "env": {
-    "SUPABASE_URL": "@supabase-url",
-    "SUPABASE_ANON": "@supabase-anon", 
-    "SUPABASE_SERVICE_KEY": "@supabase-service-key",
-    "NODE_ENV": "production",
-    "ENABLE_CONSOLE_LOGS": "false"
-  }
+  ]
 }
