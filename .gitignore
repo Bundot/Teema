@@ -9,6 +9,9 @@ node_modules/
 config/supabase.local.js
 config/supabase.js
 
+# Development environment file (contains credentials)
+dev-env.js
+
 # Test scripts and documentation (do not commit to production)
 *-test*.js
 *test*.js

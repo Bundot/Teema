@@ -49,10 +49,11 @@
   <!-- Security scripts -->
   <script src="config-loader.js"></script>
   <script src="secure-storage.js"></script>
+  <script src="dev-env.js"></script>
   <script>
     // Production-ready: No hardcoded credentials
     // Configuration will be loaded from environment variables in production
-    // For local development, ensure .env file is properly configured
+    // For local development, dev-env.js sets up environment variables
     
     // Re-initialize if config is invalid (development fallback)
     if (window.TEEMA_CONFIG && !window.TEEMA_CONFIG.isValid && typeof window.TEEMA_CONFIG.reinit === 'function') {
