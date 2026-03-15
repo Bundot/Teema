@@ -16,6 +16,7 @@
     
     // Try to load from environment (for development and production hosting)
     if (typeof process !== 'undefined' && process.env) {
+        // Node.js environment (build time)
         config.SUPABASE_URL = process.env.SUPABASE_URL || config.SUPABASE_URL;
         config.SUPABASE_ANON = process.env.SUPABASE_ANON || config.SUPABASE_ANON;
         config.SUPABASE_SERVICE_KEY = process.env.SUPABASE_SERVICE_KEY || config.SUPABASE_SERVICE_KEY;
@@ -25,7 +26,19 @@
         
         // Log environment detection (without sensitive data)
         if (process.env.SUPABASE_URL) {
-            console.log('🌍 Environment variables detected from hosting platform');
+            console.log('🌍 Environment variables detected from Node.js environment');
+        }
+    } else if (typeof window !== 'undefined' && window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1') {
+        // Production browser environment - check if variables were injected during build
+        // Vercel injects environment variables as global variables during build
+        if (typeof window.SUPABASE_URL !== 'undefined' && window.SUPABASE_URL) {
+            config.SUPABASE_URL = window.SUPABASE_URL;
+            config.SUPABASE_ANON = window.SUPABASE_ANON;
+            config.SUPABASE_SERVICE_KEY = window.SUPABASE_SERVICE_KEY || config.SUPABASE_SERVICE_KEY;
+            config.NODE_ENV = 'production';
+            config.ENABLE_CONSOLE_LOGS = false;
+            
+            console.log('🌍 Production environment variables detected from build injection');
         }
     }
     

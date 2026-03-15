@@ -12,6 +12,9 @@ config/supabase.js
 # Development environment file (contains credentials)
 dev-env.js
 
+# Build-generated files (contains injected credentials)
+env-inject.js
+
 # Test scripts and documentation (do not commit to production)
 *-test*.js
 *test*.js
