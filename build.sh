@@ -34,13 +34,29 @@ EOF
 for html_file in *.html; do
     if [ -f "$html_file" ]; then
         echo "📝 Processing $html_file..."
-        # Replace both <script src="dev-env.js"></script> and variations
+        # Create backup
+        cp "$html_file" "$html_file.backup"
+        
+        # Replace dev-env.js references with env-inject.js
         sed -i.tmp \
-            -e 's/<script src="dev-env.js"><\/script>/<script src="env-inject.js"><\/script>/g' \
-            -e 's/<script src="dev-env.js" ><\/script>/<script src="env-inject.js"><\/script>/g' \
-            -e 's/<script src="dev-env.js"[^>]*><\/script>/<script src="env-inject.js"><\/script>/g' \
+            -e 's|<script src="dev-env.js"></script>|<script src="env-inject.js"></script>|g' \
+            -e 's|<script src="dev-env.js" ></script>|<script src="env-inject.js"></script>|g' \
+            -e 's|<script src="dev-env.js"[^>]*></script>|<script src="env-inject.js"></script>|g' \
             "$html_file"
-        rm -f "$html_file.tmp"
+        
+        # Verify replacement worked
+        if grep -q "env-inject.js" "$html_file"; then
+            echo "✅ Successfully replaced dev-env.js in $html_file"
+        else
+            echo "⚠️ No dev-env.js found in $html_file (or replacement failed)"
+            # Restore from backup if replacement failed
+            if [ -f "$html_file.backup" ]; then
+                mv "$html_file.backup" "$html_file"
+            fi
+        fi
+        
+        # Clean up temporary files
+        rm -f "$html_file.tmp" "$html_file.backup"
     fi
 done
 
