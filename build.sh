@@ -31,32 +31,26 @@ console.log('🔑 SUPABASE_ANON:', window.SUPABASE_ANON ? '✅' : '❌');
 EOF
 
 # Replace dev-env.js with env-inject.js in HTML files
+# Using a more robust sed pattern that works on both macOS and Linux
 for html_file in *.html; do
     if [ -f "$html_file" ]; then
         echo "📝 Processing $html_file..."
-        # Create backup
-        cp "$html_file" "$html_file.backup"
         
-        # Replace dev-env.js references with env-inject.js
-        sed -i.tmp \
-            -e 's|<script src="dev-env.js"></script>|<script src="env-inject.js"></script>|g' \
-            -e 's|<script src="dev-env.js" ></script>|<script src="env-inject.js"></script>|g' \
-            -e 's|<script src="dev-env.js"[^>]*></script>|<script src="env-inject.js"></script>|g' \
-            "$html_file"
-        
-        # Verify replacement worked
-        if grep -q "env-inject.js" "$html_file"; then
-            echo "✅ Successfully replaced dev-env.js in $html_file"
-        else
-            echo "⚠️ No dev-env.js found in $html_file (or replacement failed)"
-            # Restore from backup if replacement failed
-            if [ -f "$html_file.backup" ]; then
-                mv "$html_file.backup" "$html_file"
+        # Check if the file contains dev-env.js
+        if grep -q "dev-env.js" "$html_file"; then
+            # Create a temporary file
+            # On Linux sed -i works, on macOS sed -i '' works. 
+            # Combining them into a portable approach:
+            sed 's/dev-env\.js/env-inject.js/g' "$html_file" > "$html_file.tmp" && mv "$html_file.tmp" "$html_file"
+            
+            if grep -q "env-inject.js" "$html_file"; then
+                echo "✅ Successfully replaced dev-env.js in $html_file"
+            else
+                echo "❌ Replacement failed in $html_file"
             fi
+        else
+            echo "ℹ️ No dev-env.js reference found in $html_file"
         fi
-        
-        # Clean up temporary files
-        rm -f "$html_file.tmp" "$html_file.backup"
     fi
 done
 

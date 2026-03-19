@@ -30,9 +30,9 @@
         }
     } else if (typeof window !== 'undefined' && window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1') {
         // Production browser environment - check if variables were injected during build
-        // Vercel injects environment variables as global variables during build
-        // Use a small delay to ensure env-inject.js has loaded
-        setTimeout(() => {
+        // Vercel injects environment variables as global variables via env-inject.js
+        // Use a sufficient delay to ensure env-inject.js has loaded and executed
+        const checkInjectedVars = (attempts = 0) => {
             if (typeof window.SUPABASE_URL !== 'undefined' && window.SUPABASE_URL) {
                 config.SUPABASE_URL = window.SUPABASE_URL;
                 config.SUPABASE_ANON = window.SUPABASE_ANON;
@@ -42,9 +42,9 @@
                 
                 console.log('🌍 Production environment variables detected from build injection');
                 
-                // Re-validate and update config
+                // Re-validate and update global TEEMA_CONFIG
                 const errors = validateConfig();
-                if (errors.length === 0) {
+                if (errors.length === 0 && window.TEEMA_CONFIG) {
                     window.TEEMA_CONFIG.isValid = true;
                     window.TEEMA_CONFIG.errors = [];
                     window.TEEMA_CONFIG.SUPABASE_URL = config.SUPABASE_URL;
@@ -55,8 +55,13 @@
                     
                     console.log('✅ Configuration updated with production values');
                 }
+            } else if (attempts < 10) {
+                // Retry every 100ms for up to 1 second
+                setTimeout(() => checkInjectedVars(attempts + 1), 100);
             }
-        }, 100);
+        };
+        
+        checkInjectedVars();
     }
     
     // Try to load from window config (fallback for browser environment)

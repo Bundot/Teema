@@ -2,20 +2,5 @@
   "buildCommand": "./build.sh",
   "outputDirectory": ".",
   "installCommand": "echo 'No dependencies to install'",
-  "framework": null,
-  "builds": [
-    {
-      "src": "**/*.{html,css,js,json,jpg,jpeg,png,webp}",
-      "use": "@vercel/static",
-      "config": {
-        "distDir": "."
-      }
-    }
-  ],
-  "routes": [
-    {
-      "src": "/(.*)",
-      "dest": "/$1"
-    }
-  ]
+  "framework": null
 }
