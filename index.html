@@ -5,7 +5,7 @@
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title>Teema — Nigerian Food & Snacks Marketplace</title>
-	<link rel="stylesheet" href="styles.css?v=11">
+	<link rel="stylesheet" href="styles.css?v=17">
 	<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Poppins:wght@300;400;500;600&display=swap"
 		rel="stylesheet">
 	<!-- Security scripts -->
@@ -73,18 +73,47 @@
 					<button class="cta">SHOP NOW</button>
 				</div>
 
-				<div class="hero-image">
-					<img src="./assets/top1.jpg"
-						alt="Assorted Nigerian meals on a table">
+				<div class="hero-image animated-cart-container">
+					<div class="cart-wrapper">
+						<svg class="cart-icon" width="200" height="200" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+							<circle cx="9" cy="21" r="2"></circle>
+							<circle cx="20" cy="21" r="2"></circle>
+							<path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+						</svg>
+						<div class="food-item item-1">🥫</div>
+						<div class="food-item item-2">🥛</div>
+						<div class="food-item item-3">🧃</div>
+						<div class="speed-lines">
+							<div class="line l1"></div>
+							<div class="line l2"></div>
+							<div class="line l3"></div>
+						</div>
+					</div>
 				</div>
 			</div>
 		</section>
 
-		<section class="features fade-in container">
-			<div>🚚 Fast Delivery</div>
-			<div>🌶 Authentic Flavours</div>
-			<div>🛒 Wide Selection</div>
-			<div>✅ Fresh & Hygienic</div>
+		<section class="features-marquee fade-in">
+			<div class="marquee-content">
+				<!-- Group 1 -->
+				<span class="marquee-item"><i>🚚</i> Fast Delivery</span>
+				<span class="marquee-dot">•</span>
+				<span class="marquee-item"><i>🌶</i> Authentic Flavours</span>
+				<span class="marquee-dot">•</span>
+				<span class="marquee-item"><i>🛒</i> Wide Selection</span>
+				<span class="marquee-dot">•</span>
+				<span class="marquee-item"><i>✅</i> Fresh & Hygienic</span>
+				<span class="marquee-dot">•</span>
+				<!-- Group 2 (Duplicate for seamless infinite scrolling) -->
+				<span class="marquee-item"><i>🚚</i> Fast Delivery</span>
+				<span class="marquee-dot">•</span>
+				<span class="marquee-item"><i>🌶</i> Authentic Flavours</span>
+				<span class="marquee-dot">•</span>
+				<span class="marquee-item"><i>🛒</i> Wide Selection</span>
+				<span class="marquee-dot">•</span>
+				<span class="marquee-item"><i>✅</i> Fresh & Hygienic</span>
+				<span class="marquee-dot">•</span>
+			</div>
 		</section>
 
 		<section class="chef fade-in container" id="products">
@@ -106,34 +135,8 @@
 
 		<section class="combos fade-in container" id="categories">
 			<h2>Popular Combos</h2>
-			<div class="combo-grid">
-				<div class="combo-card"
-					style="background-image: linear-gradient(rgba(15,23,42,0.4), rgba(15,23,42,0.8)), url('https://images.unsplash.com/photo-1544025162-6a23a2b30c3e');">
-					<div class="combo-content">
-						<h3>Rice + Beef</h3>
-						<p>Classic combo. Savory and filling.</p>
-						<button class="btn btn-ghost" style="color:#fff; border-color:rgba(255,255,255,0.3)">Add
-							Combo</button>
-					</div>
-				</div>
-				<div class="combo-card"
-					style="background-image: linear-gradient(rgba(15,23,42,0.4), rgba(15,23,42,0.8)), url('https://images.unsplash.com/photo-1589307000243-33d1f9d0d6a7');">
-					<div class="combo-content">
-						<h3>Yam + Goat meat</h3>
-						<p>Rich, local flavor.</p>
-						<button class="btn btn-ghost" style="color:#fff; border-color:rgba(255,255,255,0.3)">Add
-							Combo</button>
-					</div>
-				</div>
-				<div class="combo-card"
-					style="background-image: linear-gradient(rgba(15,23,42,0.4), rgba(15,23,42,0.8)), url('https://images.unsplash.com/photo-1561063878-6b9d2b8b2e26');">
-					<div class="combo-content">
-						<h3>Plantain + Gizzard</h3>
-						<p>Sweet and spicy perfection.</p>
-						<button class="btn btn-ghost" style="color:#fff; border-color:rgba(255,255,255,0.3)">Add
-							Combo</button>
-					</div>
-				</div>
+			<div class="combo-grid" id="combos-grid">
+				<!-- Dynamically rendered from Supabase -->
 			</div>
 		</section>
 
@@ -200,7 +203,7 @@
 		<div class="modal-backdrop" tabindex="-1" data-close="success-backdrop"></div>
 	</div>
 
-	<script src="script.js?v=5"></script>
+	<script src="script.js?v=8"></script>
 
 	<!-- Inline products JSON for home page rendering (first-3 selection uses this as source) -->
 	<script id="products-json" type="application/json">

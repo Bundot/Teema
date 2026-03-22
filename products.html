@@ -5,7 +5,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <title>Products — Teema</title>
-  <link rel="stylesheet" href="styles.css?v=11">
+  <link rel="stylesheet" href="styles.css?v=15">
   <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Poppins:wght@300;400;500;600&display=swap"
     rel="stylesheet">
 </head>
@@ -43,12 +43,21 @@
   </header>
 
   <main id="main">
-    <!-- <div class="page-header"
-      style="background: linear-gradient(135deg, rgba(245,158,11,0.1) 0%, rgba(228,87,46,0.1) 100%); padding: 120px 20px 80px 20px; text-align: center; border-bottom: 1px solid rgba(0,0,0,0.05); margin-bottom: 40px;">
-      <h1 style="font-size: clamp(36px, 6vw, 64px); color: #0f172a; margin-bottom: 16px;">Our Menu</h1>
-      <p style="font-size: 18px; color: #64748b; max-width: 600px; margin: 0 auto; font-family: 'Poppins', sans-serif;">
-        Discover our full range of authentic Nigerian meals, fresh ingredients, and signature snacks.</p>
-    </div> -->
+    <div class="page-header shop-header">
+      <div class="header-content fade-in">
+        <h1>Teema Pantry</h1>
+        <p>Discover our full range of authentic Nigerian meals, fresh ingredients, and signature snacks.</p>
+      </div>
+    </div>
+
+    <!-- Category filters -->
+    <div class="category-filters container fade-in">
+      <button class="filter-btn active">All</button>
+      <button class="filter-btn">Grains & Flours</button>
+      <button class="filter-btn">Proteins</button>
+      <button class="filter-btn">Snacks & Spices</button>
+      <button class="filter-btn">Drinks</button>
+    </div>
 
     <section class="chef fade-in container" id="products">
       <!-- Toast container -->
@@ -171,7 +180,7 @@
     console.log('✅ Supabase config loaded in products page');
   </script>
 
-  <script src="script.js?v=5"></script>
+  <script src="script.js?v=8"></script>
 </body>
 
 </html>

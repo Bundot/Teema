@@ -192,6 +192,7 @@
                 removeBtn.textContent = 'Remove';
                 removeBtn.className = 'remove-btn';
                 removeBtn.setAttribute('aria-label', 'Remove item from cart');
+                removeBtn.setAttribute('data-id', item.id);
                 
                 // Assemble the structure
                 quantityDiv.appendChild(minusBtn);
@@ -243,8 +244,11 @@
     document.addEventListener('click', (e) => {
         const t = e.target;
         if (!t) return;
-        if (t.classList && t.classList.contains('add-to-cart')) {
-            const card = t.closest('.food-card'); if (!card) return;
+        
+        const cartBtn = t.closest('.add-to-cart');
+        if (cartBtn) {
+            e.preventDefault();
+            const card = cartBtn.closest('.food-card'); if (!card) return;
             let id = card.dataset.id || card.getAttribute('data-id');
             const name = card.dataset.name || card.getAttribute('data-name') || (card.querySelector('p') ? card.querySelector('p').textContent.trim() : 'Item');
             let price = card.dataset.price || card.getAttribute('data-price');
@@ -256,8 +260,48 @@
             renderCart(); showToast(`${name} added to cart`, 'View cart', () => { openCart(); renderCart(); }, 4000);
             return;
         }
+
+        const buyBtn = t.closest('.buy-now');
+        if (buyBtn) {
+            e.preventDefault();
+            const card = buyBtn.closest('.food-card'); if (!card) return;
+            const name = card.dataset.name || card.getAttribute('data-name') || (card.querySelector('p') ? card.querySelector('p').textContent.trim() : 'Item');
+            let price = card.dataset.price || card.getAttribute('data-price');
+            if (!price) { const priceEl = card.querySelector('.price'); if (priceEl) { const digits = priceEl.textContent.replace(/[^0-9\.]/g, ''); price = digits ? Number(digits) : 0; } else price = 0; }
+            
+            const lines = [];
+            lines.push(`Hello, I would like to buy: ${name}`);
+            lines.push(`Price: ${formatNGN(price)}`);
+            lines.push('');
+            lines.push('Please confirm availability and delivery details.');
+            const message = lines.join('\n');
+            const rawPhone = '+447588290168';
+            const phoneDigits = rawPhone.replace(/\D/g, '');
+            const url = `https://wa.me/${phoneDigits}?text=${encodeURIComponent(message)}`;
+            window.open(url, '_blank');
+            return;
+        }
+
+        const comboBtn = t.closest('.add-combo');
+        if (comboBtn) {
+            e.preventDefault();
+            const name = comboBtn.getAttribute('data-name') || 'Combo';
+            const desc = comboBtn.getAttribute('data-desc') || '';
+            const lines = [];
+            lines.push(`Hello, I would like to enquire about the Combo: ${name}`);
+            if (desc) lines.push(`Details: ${desc}`);
+            lines.push('');
+            lines.push('Please confirm availability and delivery details.');
+            const message = lines.join('\n');
+            const rawPhone = '+447588290168';
+            const phoneDigits = rawPhone.replace(/\D/g, '');
+            const url = `https://wa.me/${phoneDigits}?text=${encodeURIComponent(message)}`;
+            window.open(url, '_blank');
+            return;
+        }
+
         if (t.dataset && (t.dataset.action === 'inc' || t.dataset.action === 'dec')) { const id = t.dataset.id; if (!id || !cart[id]) return; const delta = t.dataset.action === 'inc' ? 1 : -1; const newQty = (cart[id].quantity || 0) + delta; setItemQuantity(id, newQty); renderCart(); return; }
-        if (t.classList && t.classList.contains('remove-item')) { const id = t.dataset.id; if (!id) return; removeCartItem(id); renderCart(); return; }
+        if (t.classList && t.classList.contains('remove-btn')) { const id = t.dataset.id; if (!id) return; removeCartItem(id); renderCart(); return; }
     });
 
     document.addEventListener('input', (e) => { const t = e.target; if (t && t.classList && t.classList.contains('qty-input')) { const id = t.dataset.id; const v = Number(t.value) || 0; setItemQuantity(id, v); renderCart(); } });
@@ -318,9 +362,31 @@
             const img = document.createElement('img'); img.loading = 'lazy'; img.src = p.image || 'https://via.placeholder.com/240'; img.alt = p.name;
             const title = document.createElement('p'); title.textContent = p.name;
             const priceEl = document.createElement('div'); priceEl.className = 'price'; priceEl.textContent = formatNGN(p.price);
-            const btn = document.createElement('button'); btn.className = 'add-to-cart'; btn.setAttribute('aria-label', `Add ${p.name} to cart`); btn.textContent = 'Add to cart';
-            card.appendChild(img); card.appendChild(title); card.appendChild(priceEl); card.appendChild(btn);
+            const btn = document.createElement('button'); btn.className = 'add-to-cart'; btn.setAttribute('aria-label', `Add ${p.name} to cart`); btn.innerHTML = '<span>Cart</span>';
+            const buyBtn = document.createElement('button'); buyBtn.className = 'buy-now'; buyBtn.setAttribute('aria-label', `Buy ${p.name} now`); buyBtn.innerHTML = '<span>Buy Now</span>';
+            
+            const actionsDiv = document.createElement('div');
+            actionsDiv.className = 'card-actions';
+            actionsDiv.appendChild(btn);
+            actionsDiv.appendChild(buyBtn);
+
+            card.appendChild(img); card.appendChild(title); card.appendChild(priceEl); card.appendChild(actionsDiv);
             return card;
+        }
+
+        function renderEmptyState(container, type) {
+            container.innerHTML = `
+                <div class="empty-state" style="grid-column: 1 / -1; text-align: center; padding: 60px 20px; background: var(--bg-card); border-radius: 16px; box-shadow: 0 4px 20px rgba(0,0,0,0.05); border: 1px dashed rgba(0,0,0,0.1);">
+                    <div style="font-size: 48px; margin-bottom: 16px; opacity: 0.5;">
+                        ${type === 'products' ? '🛍️' : '🍱'}
+                    </div>
+                    <h3 style="font-family: 'Bebas Neue', sans-serif; font-size: 28px; color: #1e293b; margin-bottom: 12px; letter-spacing: 0.5px;">No ${type === 'products' ? 'Products' : 'Combos'} Available</h3>
+                    <p style="color: #64748b; margin-bottom: 24px; max-width: 400px; margin-left: auto; margin-right: auto; line-height: 1.5;">
+                        There are currently no active ${type} in the store. Please log in to the admin dashboard to add and configure new inventory.
+                    </p>
+                    <a href="admin.html" class="btn btn-primary" style="display: inline-block; text-decoration: none;">Go to Admin Dashboard</a>
+                </div>
+            `;
         }
 
         // Product rendering: parse inline JSON or fallback to fetch assets/products.json
@@ -338,7 +404,9 @@
                             sup.from('products').select('*').order('created_at', { ascending: true }).then(r => {
                                 if (r.error) { console.warn('Supabase products fetch error', r.error); fetchLocalFallback(); return; }
                                 const data = r.data || [];
-                                data.forEach((p, i) => container.appendChild(createProductCard(mapDbToProduct(p), i)));
+                                container.innerHTML = '';
+                                if (data.length === 0) { renderEmptyState(container, 'products'); }
+                                else { data.forEach((p, i) => container.appendChild(createProductCard(mapDbToProduct(p), i))); }
                                 resolve();
                             }).catch(err => { console.warn('Supabase fetch failed', err); fetchLocalFallback(); });
                         }).catch(e => { console.warn('Could not import supabase client', e); fetchLocalFallback(); });
@@ -382,7 +450,9 @@
                             sup.from('products').select('*').order('created_at', { ascending: true }).then(r => {
                                 if (r.error) { console.warn('Supabase products fetch error (home)', r.error); localHomeFallback(); return; }
                                 const data = (r.data || []).slice(0, limit);
-                                data.forEach((p, i) => container.appendChild(createProductCard(mapDbToProduct(p), i)));
+                                container.innerHTML = '';
+                                if (data.length === 0) { renderEmptyState(container, 'products'); }
+                                else { data.forEach((p, i) => container.appendChild(createProductCard(mapDbToProduct(p), i))); }
                                 try { console.log('renderHomeProducts: rendered', data.length, 'items from Supabase'); } catch (e) {}
                                 resolve();
                             }).catch(err => { console.warn('Supabase fetch failed (home)', err); localHomeFallback(); });
@@ -424,6 +494,62 @@
             };
         }
 
+        function createComboCard(c) {
+            const card = document.createElement('div');
+            card.className = 'combo-card';
+            const bgUrl = c.image_url || c.image || 'assets/banner.jpg';
+            card.style.backgroundImage = `linear-gradient(to top, rgba(0,0,0,0.8), rgba(0,0,0,0.2)), url('${bgUrl}')`;
+            
+            const content = document.createElement('div');
+            content.className = 'combo-content';
+            
+            const title = document.createElement('h3');
+            title.textContent = c.title || 'Combo';
+            
+            const descStr = c.description || (c.items && Array.isArray(c.items) ? c.items.join(', ') : '');
+            const desc = document.createElement('p');
+            desc.textContent = descStr;
+            
+            const btn = document.createElement('button');
+            btn.className = 'btn btn-ghost add-combo';
+            btn.style.color = '#fff';
+            btn.style.borderColor = 'rgba(255,255,255,0.3)';
+            btn.setAttribute('data-name', c.title || 'Combo');
+            btn.setAttribute('data-desc', descStr);
+            btn.textContent = 'Enquire Now';
+            
+            content.appendChild(title);
+            content.appendChild(desc);
+            content.appendChild(btn);
+            card.appendChild(content);
+            return card;
+        }
+
+        function renderCombosList() {
+            const container = document.getElementById('combos-grid');
+            if (!container) return Promise.resolve();
+            return new Promise((resolve) => {
+                try {
+                    if (window.SUPABASE_URL && window.SUPABASE_ANON) {
+                        import('https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm').then(mod => {
+                            const { createClient } = mod;
+                            const sup = createClient(window.SUPABASE_URL, window.SUPABASE_ANON);
+                            sup.from('combos').select('*').order('created_at', { ascending: false }).then(r => {
+                                if (r.error) return resolve();
+                                container.innerHTML = ''; 
+                                const visibleCombos = (r.data || []).filter(c => c.active !== false);
+                                if (visibleCombos.length === 0) { renderEmptyState(container, 'combos'); }
+                                else { visibleCombos.forEach(c => container.appendChild(createComboCard(c))); }
+                                resolve();
+                            }).catch(() => resolve());
+                        }).catch(() => resolve());
+                        return;
+                    }
+                } catch(e) { resolve(); }
+            });
+        }
+
     // initialize: render home first (first 4), then full products list, then initialize cart
-    renderHomeProducts(4).then(() => renderProductsList()).then(() => { loadCart(); renderCart(); });
+    // initialize: render home first (first 4), then full products list, then combos, then initialize cart
+    renderHomeProducts(4).then(() => renderProductsList()).then(() => renderCombosList()).then(() => { loadCart(); renderCart(); });
 })();
