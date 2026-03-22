@@ -5,7 +5,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <title>Teema — Admin Dashboard v15 (Logout Working)</title>
-  <link rel="stylesheet" href="admin.css?v=15">
+  <link rel="stylesheet" href="admin.css?v=16">
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
 </head>
 
@@ -32,6 +32,40 @@
   </script>
 
   <main class="container admin-main">
+    <section class="panel overview-panel" style="margin-bottom: 24px; background: transparent; border: none; box-shadow: none; padding: 0;">
+      <h2>Dashboard Overview</h2>
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-icon">🛍️</div>
+          <div class="stat-info">
+            <span class="stat-label">Total Products</span>
+            <strong id="stat-total-products" class="stat-value">0</strong>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon">🍱</div>
+          <div class="stat-info">
+            <span class="stat-label">Total Combos</span>
+            <strong id="stat-total-combos" class="stat-value">0</strong>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon">💎</div>
+          <div class="stat-info">
+            <span class="stat-label">Most Expensive</span>
+            <strong id="stat-most-expensive" class="stat-value">£ 0</strong>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon">🏷️</div>
+          <div class="stat-info">
+            <span class="stat-label">Cheapest Item</span>
+            <strong id="stat-cheapest" class="stat-value">£ 0</strong>
+          </div>
+        </div>
+      </div>
+    </section>
+
     <section class="panel">
       <h2>Products Management</h2>
       <p class="muted">Add, edit or remove products. This UI stores changes in localStorage for simulation.</p>
@@ -373,10 +407,42 @@
     // Render helpers
     function renderProductsLocal() {
       productsListEl.innerHTML = products.map(p => `<li class="item" data-id="${escapeHtml(p.id)}" data-name="${escapeHtml(p.name)}" data-price="${p.price}" data-image="${escapeHtml(p.image || p.image_url || '')}" data-sku="${escapeHtml(p.sku || '')}"><strong>${escapeHtml(p.id)}</strong><span class="meta">${escapeHtml(p.name)} — £ ${numberWithCommas(p.price)}</span><div class="row-actions"><button class="mini edit">Edit</button><button class="mini danger del">Del</button></div></li>`).join('');
+      updateDashboardStats();
     }
 
     function renderCombosLocal() {
       combosListEl.innerHTML = combos.map(c => `<li class="item" data-id="${escapeHtml(c.id)}" data-title="${escapeHtml(c.title)}" data-description="${escapeHtml(c.description)}" data-image="${escapeHtml(c.image || c.image_url || '')}" data-items="${escapeHtml((c.items || []).join(','))}"><strong>${escapeHtml(c.id)}</strong><span class="meta">${escapeHtml(c.title)}</span><div class="row-actions"><button class="mini edit">Edit</button><button class="mini danger del">Del</button></div></li>`).join('');
+      updateDashboardStats();
+    }
+
+    function updateDashboardStats() {
+      try {
+        const prodCountEl = document.getElementById('stat-total-products');
+        const comboCountEl = document.getElementById('stat-total-combos');
+        const maxPriceEl = document.getElementById('stat-most-expensive');
+        const minPriceEl = document.getElementById('stat-cheapest');
+        
+        if(prodCountEl) prodCountEl.textContent = products.length;
+        if(comboCountEl) {
+          const activeCombos = combos.filter(c => c.active !== false);
+          comboCountEl.textContent = activeCombos.length;
+        }
+        if(maxPriceEl && minPriceEl) {
+          if (products.length > 0) {
+            const prices = products.map(p => Number(p.price) || 0);
+            const maxPrice = Math.max(...prices);
+            const minPrice = Math.min(...prices);
+            const maxProd = products.find(p => Number(p.price) === maxPrice);
+            const minProd = products.find(p => Number(p.price) === minPrice);
+            
+            maxPriceEl.innerHTML = '£ ' + numberWithCommas(maxPrice) + '<span style="font-size:11px;opacity:0.6;font-weight:400;display:block;">' + (maxProd ? escapeHtml(maxProd.name) : '') + '</span>';
+            minPriceEl.innerHTML = '£ ' + numberWithCommas(minPrice) + '<span style="font-size:11px;opacity:0.6;font-weight:400;display:block;">' + (minProd ? escapeHtml(minProd.name) : '') + '</span>';
+          } else {
+            maxPriceEl.textContent = '£ 0';
+            minPriceEl.textContent = '£ 0';
+          }
+        }
+      } catch(e) { console.error('Error updating stats', e); }
     }
 
     function escapeHtml(s) { return String(s || '').replaceAll('&', '&amp;').replaceAll('<', '&lt;').replaceAll('>', '&gt;').replaceAll('"', '&quot;'); }
