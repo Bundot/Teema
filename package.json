@@ -25,5 +25,8 @@
     "@supabase/supabase-js": "^2.99.1",
     "jsdom": "^22.0.0",
     "puppeteer": "^24.39.1"
+  },
+  "devDependencies": {
+    "dotenv": "^17.3.1"
   }
 }
