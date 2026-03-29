@@ -81,3 +81,7 @@ jobs:
           password: ${{ secrets.FTP_PASSWORD }}
           local-dir: ./deploy/
           dangerous-clean-slate: false
+          protocol: ftps
+          port: 21
+          security: loose
+          timeout: 120000
