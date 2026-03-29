@@ -86,9 +86,9 @@ jobs:
           username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
           local-dir: ./deploy/
-          server-dir: domains/teemafoods.com/public_html/
+          server-dir: public_html/
           dangerous-clean-slate: true
-          state-name: .ftp-deploy-v3.json
+          state-name: .ftp-deploy-v4.json
           protocol: ftps
           port: 21
           security: loose
