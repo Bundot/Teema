@@ -1,35 +1,83 @@
-name: Deploy to GitHub Pages
+name: Deploy to Hostinger
 
 on:
   push:
     branches:
       - main
-
-permissions:
-  contents: read
-  pages: write
-  id-token: write
+      - master
 
 jobs:
-  build:
+  build-and-deploy:
     runs-on: ubuntu-latest
-    name: Prepare pages artifact
     steps:
-      - name: Checkout repository
+      - name: Checkout code
         uses: actions/checkout@v4
 
-      # If you have a build step (npm, hugo, eleventy, etc.) run it here and
-      # change the `path` in the upload step to the build output directory.
+      - name: Prepare Deployment Directory
+        run: |
+          echo "🚀 Preparing files for Hostinger deployment..."
+          
+          # Create clean deploy directory
+          mkdir -p deploy
+          
+          # Create env-inject.js
+          cat > deploy/env-inject.js << EOF
+          // Environment Variables for Hostinger Deployment (Injected via CI/CD)
+          window.SUPABASE_URL = '${{ secrets.SUPABASE_URL }}';
+          window.SUPABASE_ANON = '${{ secrets.SUPABASE_ANON }}';
+          window.SUPABASE_SERVICE_KEY = '${{ secrets.SUPABASE_SERVICE_KEY }}';
+          window.NODE_ENV = 'production';
+          window.ENABLE_CONSOLE_LOGS = '${{ secrets.ENABLE_CONSOLE_LOGS }}';
+          
+          console.log('🌍 Environment variables injected for Hostinger');
+          EOF
+          
+          # Process HTML files
+          for html_file in *.html; do
+              if [ -f "\$html_file" ]; then
+                  echo "📝 Processing \$html_file..."
+                  sed 's/dev-env\.js/env-inject.js/g' "\$html_file" > "deploy/\$html_file"
+              fi
+          done
+          
+          # Copy assets and scripts
+          echo "📂 Copying assets and styles..."
+          [ -d "assets" ] && cp -r assets deploy/
+          cp *.css deploy/ 2>/dev/null || true
+          cp script.js deploy/ 2>/dev/null || true
+          cp secure-storage.js deploy/ 2>/dev/null || true
+          cp config-loader.js deploy/ 2>/dev/null || true
+          cp security-validator.js deploy/ 2>/dev/null || true
+          
+          # Create config directory and supabase.js
+          mkdir -p deploy/config
+          cp deploy/env-inject.js deploy/config/supabase.js
+          
+          # Create .htaccess for Hostinger
+          echo "📝 Creating .htaccess..."
+          cat > deploy/.htaccess << 'EOF'
+          # Force HTTPS
+          RewriteEngine On
+          RewriteCond %{HTTPS} off
+          RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+          
+          # Security Headers
+          <IfModule mod_headers.c>
+              Header set Content-Security-Policy "default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https:; connect-src 'self' https://qnuznpihinvgzomddivo.supabase.co; frame-ancestors 'none'; base-uri 'self'; form-action 'self';"
+              Header set Strict-Transport-Security "max-age=31536000; includeSubDomains; preload"
+              Header set X-Frame-Options "DENY"
+              Header set X-Content-Type-Options "nosniff"
+              Header set X-XSS-Protection "1; mode=block"
+              Header set Referrer-Policy "strict-origin-when-cross-origin"
+              Header set Permissions-Policy "geolocation=(), microphone=(), camera=(), payment=(), usb=(), magnetometer=(), gyroscope=()"
+          </IfModule>
+          EOF
 
-      - name: Upload artifact for GitHub Pages
-        uses: actions/upload-pages-artifact@v1
+      - name: Deploy to Hostinger FTP
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
         with:
-          path: './'
-
-  deploy:
-    needs: build
-    runs-on: ubuntu-latest
-    name: Deploy to GitHub Pages
-    steps:
-      - name: Deploy
-        uses: actions/deploy-pages@v1
+          server: ${{ secrets.FTP_SERVER }}
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          local-dir: ./deploy/
+          dangerous-clean-slate: false
