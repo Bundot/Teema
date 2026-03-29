@@ -79,7 +79,7 @@ jobs:
           echo "🔍 Contents of the deploy folder:"
           ls -R deploy/
 
-      - name: Deploy to Hostinger FTP
+      - name: Deploy to Master Root
         uses: SamKirkland/FTP-Deploy-Action@v4.3.5
         with:
           server: ${{ secrets.FTP_SERVER }}
@@ -87,8 +87,23 @@ jobs:
           password: ${{ secrets.FTP_PASSWORD }}
           local-dir: ./deploy/
           server-dir: public_html/
-          dangerous-clean-slate: true
-          state-name: .ftp-deploy-v4.json
+          dangerous-clean-slate: false
+          state-name: .ftp-deploy-v5-master.json
+          protocol: ftps
+          port: 21
+          security: loose
+          timeout: 120000
+
+      - name: Deploy to Addon Root
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+        with:
+          server: ${{ secrets.FTP_SERVER }}
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          local-dir: ./deploy/
+          server-dir: domains/teemafoods.com/public_html/
+          dangerous-clean-slate: false
+          state-name: .ftp-deploy-v5-addon.json
           protocol: ftps
           port: 21
           security: loose
