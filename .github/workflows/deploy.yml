@@ -73,6 +73,11 @@ jobs:
           </IfModule>
           EOF
 
+      - name: Debug - List Files
+        run: |
+          echo "🔍 Contents of the deploy folder:"
+          ls -R deploy/
+
       - name: Deploy to Hostinger FTP
         uses: SamKirkland/FTP-Deploy-Action@v4.3.5
         with:
