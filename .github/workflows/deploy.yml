@@ -15,10 +15,11 @@ jobs:
 
       - name: Prepare Deployment Directory
         run: |
-          echo "🚀 Preparing files for Hostinger deployment..."
-          
           # Create clean deploy directory
           mkdir -p deploy
+          
+          echo "📂 Listing workspace files:"
+          ls -la
           
           # Create env-inject.js
           cat > deploy/env-inject.js << EOF
