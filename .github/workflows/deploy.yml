@@ -9,6 +9,8 @@ on:
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -79,32 +81,9 @@ jobs:
           echo "🔍 Contents of the deploy folder:"
           ls -R deploy/
 
-      - name: Deploy to Master Root
-        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+      - name: Deploy to Branch for Hostinger
+        uses: JamesIves/github-pages-deploy-action@v4.5.0
         with:
-          server: ${{ secrets.FTP_SERVER }}
-          username: ${{ secrets.FTP_USERNAME }}
-          password: ${{ secrets.FTP_PASSWORD }}
-          local-dir: ./deploy/
-          server-dir: public_html/
-          dangerous-clean-slate: false
-          state-name: .ftp-deploy-v5-master.json
-          protocol: ftps
-          port: 21
-          security: loose
-          timeout: 120000
-
-      - name: Deploy to Addon Root
-        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
-        with:
-          server: ${{ secrets.FTP_SERVER }}
-          username: ${{ secrets.FTP_USERNAME }}
-          password: ${{ secrets.FTP_PASSWORD }}
-          local-dir: ./deploy/
-          server-dir: domains/teemafoods.com/public_html/
-          dangerous-clean-slate: false
-          state-name: .ftp-deploy-v5-addon.json
-          protocol: ftps
-          port: 21
-          security: loose
-          timeout: 120000
+          branch: hostinger-build 
+          folder: deploy
+          commit-message: "Deploy production build for Hostinger"
