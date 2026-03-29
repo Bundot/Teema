@@ -79,12 +79,6 @@ jobs:
           echo "🔍 Contents of the deploy folder:"
           ls -R deploy/
 
-      - name: Debug - List Remote Directory
-        run: |
-          echo "🔍 Checking remote directory contents..."
-          curl --ftp-pasv -u "${{ secrets.FTP_USERNAME }}:${{ secrets.FTP_PASSWORD }}" \
-            "ftp://${{ secrets.FTP_SERVER }}/" --list-only || echo "❌ Could not list remote directory"
-
       - name: Deploy to Hostinger FTP
         uses: SamKirkland/FTP-Deploy-Action@v4.3.5
         with:
@@ -93,7 +87,8 @@ jobs:
           password: ${{ secrets.FTP_PASSWORD }}
           local-dir: ./deploy/
           server-dir: public_html/
-          dangerous-clean-slate: true
+          dangerous-clean-slate: false
+          state-name: .ftp-deploy-v2-sync-state.json
           protocol: ftps
           port: 21
           security: loose
