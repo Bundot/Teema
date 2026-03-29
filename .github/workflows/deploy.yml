@@ -34,9 +34,9 @@ jobs:
           
           # Process HTML files
           for html_file in *.html; do
-              if [ -f "\$html_file" ]; then
-                  echo "📝 Processing \$html_file..."
-                  sed 's/dev-env\.js/env-inject.js/g' "\$html_file" > "deploy/\$html_file"
+              if [ -f "$html_file" ]; then
+                  echo "📝 Processing $html_file..."
+                  sed 's/dev-env\.js/env-inject.js/g' "$html_file" > "deploy/$html_file"
               fi
           done
           
