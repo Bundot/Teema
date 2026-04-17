@@ -6,10 +6,10 @@
     
     // Configuration object with defaults
     const config = {
-        SUPABASE_URL: null,
-        SUPABASE_ANON: null,
+        SUPABASE_URL: 'https://qnuznpihinvgzomddivo.supabase.co',
+        SUPABASE_ANON: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFudXpucGloaW52Z3pvbWRkaXZvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzMzOTc3NjYsImV4cCI6MjA4ODk3Mzc2Nn0.G9mYzgm5upwntLJW0sj-Uh3a2hTM-HbC1D4td0dgR8Y',
         SUPABASE_SERVICE_KEY: null,
-        NODE_ENV: 'development',
+        NODE_ENV: 'production',
         SESSION_TIMEOUT: 3600,
         ENABLE_CONSOLE_LOGS: true
     };
