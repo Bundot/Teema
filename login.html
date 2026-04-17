@@ -52,11 +52,11 @@
   <!-- Security scripts -->
   <script src="config-loader.js?v=3"></script>
   <script src="secure-storage.js?v=3"></script>
-  <script src="dev-env.js"></script>
+  <script src="env-inject.js"></script>
   <script>
     // Production-ready: No hardcoded credentials
     // Configuration will be loaded from environment variables in production
-    // For local development, dev-env.js sets up environment variables
+    // For local development, env-inject.js sets up environment variables
     
     // Wait for configuration to load, then check if reinit is needed
     setTimeout(() => {
