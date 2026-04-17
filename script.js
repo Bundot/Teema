@@ -127,7 +127,10 @@
         }
     }
     function updateCartBadge() { const badgeEls = document.querySelectorAll('.cart-badge'); const count = Object.values(cart).reduce((s, i) => s + (i.quantity || 0), 0); badgeEls.forEach(el => el.textContent = count); }
-    function formatNGN(n) { return '£ ' + Number(n).toLocaleString('en-NG'); }
+    function formatNGN(n) { 
+        const val = (n || 0) / 100;
+        return `£${val.toFixed(2)}`;
+    }
 
     function addToCartItem(id, name, price, image, sku) { if (!id) return; if (!cart[id]) cart[id] = { id, name, price: Number(price || 0), image: image || '', sku: sku || '', quantity: 1 }; else cart[id].quantity = (cart[id].quantity || 0) + 1; saveCart(); }
     function removeCartItem(id) { delete cart[id]; saveCart(); }
@@ -347,6 +350,19 @@
     }
 
     // initialize
+        // Generate skeleton card
+        function createSkeletonCard() {
+            const card = document.createElement('div');
+            card.className = 'skeleton-card';
+            card.innerHTML = `
+                <div class="skeleton-img skeleton"></div>
+                <div class="skeleton-title skeleton"></div>
+                <div class="skeleton-price skeleton" style="margin-bottom: 8px;"></div>
+                <div class="skeleton-btn skeleton"></div>
+            `;
+            return card;
+        }
+
         // shared product card builder (hoisted so home + products list can both use it)
         function createProductCard(p, idx) {
             try { console.log('createProductCard:', p && p.id, p && p.name); } catch (e) {}
@@ -359,7 +375,7 @@
             card.setAttribute('data-name', p.name);
             card.setAttribute('data-price', p.price);
             card.setAttribute('data-sku', p.sku || `TEEMA-${(p.id||p.name||'ITEM').toString().toUpperCase().replace(/[^A-Z0-9]+/g,'-')}`);
-            const img = document.createElement('img'); img.loading = 'lazy'; img.src = p.image || 'https://via.placeholder.com/240'; img.alt = p.name;
+            const img = document.createElement('img'); img.loading = 'lazy'; img.decoding = 'async'; img.src = p.image || 'https://via.placeholder.com/240'; img.alt = p.name;
             const title = document.createElement('p'); title.textContent = p.name;
             const priceEl = document.createElement('div'); priceEl.className = 'price'; priceEl.textContent = formatNGN(p.price);
             const btn = document.createElement('button'); btn.className = 'add-to-cart'; btn.setAttribute('aria-label', `Add ${p.name} to cart`); btn.innerHTML = '<span>Cart</span>';
@@ -389,98 +405,80 @@
             `;
         }
 
-        // Product rendering: parse inline JSON or fallback to fetch assets/products.json
-        function renderProductsList() {
+        // Product rendering using SWR Data Loader
+        async function renderProductsList() {
             const container = document.getElementById('products-grid');
-            if (!container) return Promise.resolve();
-            // Prefer live Supabase data when available (config via config/supabase.local.js)
-            return new Promise((resolve) => {
-                try {
-                    if (window.SUPABASE_URL && window.SUPABASE_ANON) {
-                        // dynamic import of supabase client
-                        import('https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm').then(mod => {
-                            const { createClient } = mod;
-                            const sup = createClient(window.SUPABASE_URL, window.SUPABASE_ANON);
-                            sup.from('products').select('*').order('created_at', { ascending: true }).then(r => {
-                                if (r.error) { console.warn('Supabase products fetch error', r.error); fetchLocalFallback(); return; }
-                                const data = r.data || [];
-                                container.innerHTML = '';
-                                if (data.length === 0) { renderEmptyState(container, 'products'); }
-                                else { data.forEach((p, i) => container.appendChild(createProductCard(mapDbToProduct(p), i))); }
-                                resolve();
-                            }).catch(err => { console.warn('Supabase fetch failed', err); fetchLocalFallback(); });
-                        }).catch(e => { console.warn('Could not import supabase client', e); fetchLocalFallback(); });
-                        return;
-                    }
-                } catch (e) { console.warn('Error while attempting supabase fetch', e); }
+            if (!container) return;
+            
+            // Show Skeletons instantly
+            container.innerHTML = '';
+            for(let i=0; i<12; i++) container.appendChild(createSkeletonCard());
 
-                // If we reach here, Supabase is not configured, so use fallback
-                fetchLocalFallback();
-
-                // fallback to inline JSON or static assets
-                function fetchLocalFallback() {
-                    try {
-                        const inline = document.getElementById('products-json');
-                        if (inline) {
-                            const raw = inline.textContent.trim();
-                            if (raw) {
-                                const data = JSON.parse(raw);
-                                data.forEach((p, i) => container.appendChild(createProductCard(p, i)));
-                                resolve(); return;
-                            }
-                        }
-                    } catch (e) { console.warn('Could not parse inline products JSON', e); }
-                    fetch('assets/products.json').then(r => r.json()).then(data => { data.forEach((p,i) => container.appendChild(createProductCard(p,i))); resolve(); }).catch(err => { console.warn('Could not load products.json', err); resolve(); });
+            // Background update callback
+            const handleUpdate = (products) => {
+                container.innerHTML = '';
+                if (!products || products.length === 0) {
+                    renderEmptyState(container, 'products');
+                    return;
                 }
-            });
+                products.forEach((p, i) => container.appendChild(createProductCard(mapDbToProduct(p), i)));
+            };
+
+            if (window.TeemaProducts) {
+                try {
+                    const products = await window.TeemaProducts.load(handleUpdate);
+                    handleUpdate(products);
+                } catch (error) {
+                    console.error('Failed to load products', error);
+                }
+            } else {
+                fetchLocalFallback(container, 100);
+            }
         }
 
-    // render a short home grid using the first `limit` products
-    function renderHomeProducts(limit = 4) {
-            try { console.log('renderHomeProducts start - limit=', limit); } catch (e) {}
+        // render a short home grid using the SWR data loader
+        async function renderHomeProducts(limit = 4) {
             const container = document.getElementById('home-products-grid');
-            try { console.log('home-products-grid element found?', !!container); } catch (e) {}
-            if (!container) return Promise.resolve();
-            return new Promise((resolve) => {
-                try {
-                    if (window.SUPABASE_URL && window.SUPABASE_ANON) {
-                        import('https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm').then(mod => {
-                            const { createClient } = mod;
-                            const sup = createClient(window.SUPABASE_URL, window.SUPABASE_ANON);
-                            sup.from('products').select('*').order('created_at', { ascending: true }).then(r => {
-                                if (r.error) { console.warn('Supabase products fetch error (home)', r.error); localHomeFallback(); return; }
-                                const data = (r.data || []).slice(0, limit);
-                                container.innerHTML = '';
-                                if (data.length === 0) { renderEmptyState(container, 'products'); }
-                                else { data.forEach((p, i) => container.appendChild(createProductCard(mapDbToProduct(p), i))); }
-                                try { console.log('renderHomeProducts: rendered', data.length, 'items from Supabase'); } catch (e) {}
-                                resolve();
-                            }).catch(err => { console.warn('Supabase fetch failed (home)', err); localHomeFallback(); });
-                        }).catch(e => { console.warn('Could not import supabase client (home)', e); localHomeFallback(); });
-                        return;
-                    }
-                } catch (e) { console.warn('Error while attempting supabase fetch (home)', e); }
+            if (!container) return;
+            
+            // Show skeletons
+            container.innerHTML = '';
+            for(let i=0; i<limit; i++) container.appendChild(createSkeletonCard());
 
-                // If we reach here, Supabase is not configured, so use fallback
-                localHomeFallback();
-
-                function localHomeFallback() {
-                    try { console.log('renderHomeProducts: attempting inline products-json fallback'); } catch (e) {}
-                    try {
-                        const inline = document.getElementById('products-json');
-                        if (inline) {
-                            const raw = inline.textContent.trim();
-                            if (raw) {
-                                const data = JSON.parse(raw).slice(0, limit);
-                                data.forEach((p, i) => container.appendChild(createProductCard(p, i)));
-                                try { console.log('renderHomeProducts: rendered', data.length, 'items from inline JSON'); } catch (e) {}
-                                resolve(); return;
-                            }
-                        }
-                    } catch (e) { console.warn('Could not parse inline products JSON for home', e); }
-                    fetch('assets/products.json').then(r => r.json()).then(data => { data.slice(0, limit).forEach((p,i) => container.appendChild(createProductCard(p,i))); resolve(); }).catch(err => { console.warn('Could not load products.json for home', err); resolve(); });
+            const handleUpdate = (products) => {
+                container.innerHTML = '';
+                const slice = products.slice(0, limit);
+                if (!slice || slice.length === 0) {
+                    renderEmptyState(container, 'products');
+                    return;
                 }
-            });
+                slice.forEach((p, i) => container.appendChild(createProductCard(mapDbToProduct(p), i)));
+            };
+
+            if (window.TeemaProducts) {
+                try {
+                    const products = await window.TeemaProducts.load(handleUpdate);
+                    handleUpdate(products);
+                } catch (error) {
+                    console.error('Failed to load products', error);
+                }
+            } else {
+                fetchLocalFallback(container, limit);
+            }
+        }
+
+        // fallback to inline static
+        function fetchLocalFallback(container, limit) {
+            try {
+                const inline = document.getElementById('products-json');
+                if (inline && inline.textContent.trim()) {
+                    const data = JSON.parse(inline.textContent.trim()).slice(0, limit);
+                    container.innerHTML = '';
+                    data.forEach((p, i) => container.appendChild(createProductCard(p, i)));
+                    return;
+                }
+            } catch (e) { console.warn('Fallback inline JSON failed', e); }
+            container.innerHTML = '<p>Items unavailable</p>';
         }
 
         // map DB row to product shape used by createProductCard
@@ -493,6 +491,28 @@
                 sku: row.sku || ''
             };
         }
+        
+        // Function to render products from dynamically loaded data
+        window.renderProductsFromData = function(products) {
+            const container = document.getElementById('products-grid');
+            if (!container) return;
+            
+            console.log('Rendering products from database data:', products.length, 'items');
+            
+            // Clear existing products
+            container.innerHTML = '';
+            
+            // Render each product
+            products.forEach((product, index) => {
+                const card = createProductCard(product, index);
+                container.appendChild(card);
+            });
+            
+            // Update cart badge
+            updateCartBadge();
+            
+            console.log('Successfully rendered', products.length, 'products');
+        };
 
         function createComboCard(c) {
             const card = document.createElement('div');

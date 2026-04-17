@@ -5,6 +5,10 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <title>Products — Teema</title>
+  
+  <!-- Performance: Preconnect to backend -->
+  <link rel="preconnect" href="https://qnuznpihinvgzomddivo.supabase.co" crossorigin>
+  <link rel="dns-prefetch" href="https://qnuznpihinvgzomddivo.supabase.co">
   <link rel="stylesheet" href="styles.css?v=15">
   <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Poppins:wght@300;400;500;600&display=swap"
     rel="stylesheet">
@@ -180,7 +184,39 @@
     console.log('✅ Supabase config loaded in products page');
   </script>
 
-  <script src="script.js?v=8"></script>
+  <!-- Load Supabase SDK -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  
+  <!-- Load database products loader -->
+  <script src="scripts/db-products-loader.js"></script>
+  
+  <script src="script.js?v=9"></script>
+  
+  <!-- Initialize dynamic product loading -->
+  <script>
+    // Override the static product loading with dynamic database loading
+    document.addEventListener('DOMContentLoaded', async function() {
+      try {
+        console.log('Loading products from database...');
+        const products = await window.TeemaProducts.load();
+        
+        // Update the inline JSON with fresh data
+        const productsJsonEl = document.getElementById('products-json');
+        if (productsJsonEl && products.length > 0) {
+          productsJsonEl.textContent = JSON.stringify(products);
+          console.log(`Loaded ${products.length} products from database`);
+          
+          // Trigger product rendering
+          if (window.renderProductsFromData) {
+            window.renderProductsFromData(products);
+          }
+        }
+      } catch (error) {
+        console.error('Failed to load products from database:', error);
+        // Fallback to static JSON will be used automatically
+      }
+    });
+  </script>
 </body>
 
 </html>

@@ -406,7 +406,7 @@
 
     // Render helpers
     function renderProductsLocal() {
-      productsListEl.innerHTML = products.map(p => `<li class="item" data-id="${escapeHtml(p.id)}" data-name="${escapeHtml(p.name)}" data-price="${p.price}" data-image="${escapeHtml(p.image || p.image_url || '')}" data-sku="${escapeHtml(p.sku || '')}"><strong>${escapeHtml(p.id)}</strong><span class="meta">${escapeHtml(p.name)} — £ ${numberWithCommas(p.price)}</span><div class="row-actions"><button class="mini edit">Edit</button><button class="mini danger del">Del</button></div></li>`).join('');
+      productsListEl.innerHTML = products.map(p => `<li class="item" data-id="${escapeHtml(p.id)}" data-name="${escapeHtml(p.name)}" data-price="${p.price}" data-image="${escapeHtml(p.image || p.image_url || '')}" data-sku="${escapeHtml(p.sku || '')}"><strong>${escapeHtml(p.id)}</strong><span class="meta">${escapeHtml(p.name)} — £ ${formatPrice(p.price)}</span><div class="row-actions"><button class="mini edit">Edit</button><button class="mini danger del">Del</button></div></li>`).join('');
       updateDashboardStats();
     }
 
@@ -435,11 +435,11 @@
             const maxProd = products.find(p => Number(p.price) === maxPrice);
             const minProd = products.find(p => Number(p.price) === minPrice);
             
-            maxPriceEl.innerHTML = '£ ' + numberWithCommas(maxPrice) + '<span style="font-size:11px;opacity:0.6;font-weight:400;display:block;">' + (maxProd ? escapeHtml(maxProd.name) : '') + '</span>';
-            minPriceEl.innerHTML = '£ ' + numberWithCommas(minPrice) + '<span style="font-size:11px;opacity:0.6;font-weight:400;display:block;">' + (minProd ? escapeHtml(minProd.name) : '') + '</span>';
+            maxPriceEl.innerHTML = '£ ' + formatPrice(maxPrice) + '<span style="font-size:11px;opacity:0.6;font-weight:400;display:block;">' + (maxProd ? escapeHtml(maxProd.name) : '') + '</span>';
+            minPriceEl.innerHTML = '£ ' + formatPrice(minPrice) + '<span style="font-size:11px;opacity:0.6;font-weight:400;display:block;">' + (minProd ? escapeHtml(minProd.name) : '') + '</span>';
           } else {
-            maxPriceEl.textContent = '£ 0';
-            minPriceEl.textContent = '£ 0';
+            maxPriceEl.textContent = '£ 0.00';
+            minPriceEl.textContent = '£ 0.00';
           }
         }
       } catch(e) { console.error('Error updating stats', e); }
@@ -447,6 +447,10 @@
 
     function escapeHtml(s) { return String(s || '').replaceAll('&', '&amp;').replaceAll('<', '&lt;').replaceAll('>', '&gt;').replaceAll('"', '&quot;'); }
     function numberWithCommas(x) { return String(x).replace(/\B(?=(\d{3})+(?!\d))/g, ","); }
+    function formatPrice(priceInPence) {
+      const priceInPounds = priceInPence / 100;
+      return priceInPounds.toFixed(2);
+    }
 
     // CRUD operations (use Supabase if configured, otherwise localStorage)
     async function loadData() {
@@ -471,7 +475,7 @@
       // Generate auto-generated fields
       const id = generateUUID();
       const name = String(formP.name.value || '').trim();
-      const price = Number(formP.price.value || 0);
+      const price = Math.round(Number(formP.price.value || 0) * 100); // Convert pounds to pence
       let image = String(formP.image.value || '').trim();
       const sku = generateSkuFromName(name);
 
@@ -568,7 +572,7 @@
 
       const id = String(formP.id.value || '').trim();
       const name = String(formP.name.value || '').trim();
-      const price = Number(formP.price.value || 0);
+      const price = Math.round(Number(formP.price.value || 0) * 100); // Convert pounds to pence
       let image = String(formP.image.value || '').trim();
       let sku = String(formP.sku.value || '').trim();
 
@@ -847,7 +851,7 @@
 
       formP.id.value = p.id;
       formP.name.value = p.name;
-      formP.price.value = p.price;
+      formP.price.value = formatPrice(p.price);
       formP.image.value = p.image || p.image_url || '';
       formP.sku.value = p.sku || generateSkuFromName(p.name); // Ensure SKU is populated
       formP.id.dataset.original = p.id;

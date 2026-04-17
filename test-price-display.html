@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Price Display Test</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        .test-case { margin: 10px 0; padding: 10px; border: 1px solid #ccc; }
+        .old-display { color: red; }
+        .new-display { color: green; font-weight: bold; }
+        .product-card { border: 1px solid #ddd; padding: 15px; margin: 10px 0; max-width: 300px; }
+        .product-card img { width: 100%; height: 150px; object-fit: cover; }
+        .product-card .price { font-size: 18px; font-weight: bold; color: #2c3e50; }
+    </style>
+</head>
+<body>
+    <h1>Price Display Test</h1>
+    
+    <h2>Format Function Test</h2>
+    <div id="format-test"></div>
+    
+    <h2>Product Card Test</h2>
+    <div id="product-cards"></div>
+    
+    <script>
+        // Test the formatNGN function
+        function formatNGN_old(n) { return '£ ' + Number(n).toLocaleString('en-NG'); }
+        function formatNGN_new(n) { 
+            const priceInPounds = Number(n) / 100;
+            return '£ ' + priceInPounds.toFixed(2);
+        }
+        
+        // Test cases with real database prices
+        const testPrices = [
+            { name: "3 in 1 organic wine", price: 849 },
+            { name: "Amstel Malta Can 33cl", price: 100 },
+            { name: "Box of Green Plantain", price: 4500 },
+            { name: "20kg Box of Yam", price: 3500 },
+            { name: "Ewe Moi Moi", price: 200 },
+            { name: "Fayrouz", price: 100 },
+            { name: "Maltina Classic", price: 100 }
+        ];
+        
+        // Test format function
+        const formatTestEl = document.getElementById('format-test');
+        testPrices.forEach(item => {
+            const div = document.createElement('div');
+            div.className = 'test-case';
+            div.innerHTML = `
+                <strong>${item.name}</strong><br>
+                Database: ${item.price} pence<br>
+                <span class="old-display">Old: ${formatNGN_old(item.price)}</span><br>
+                <span class="new-display">New: ${formatNGN_new(item.price)}</span>
+            `;
+            formatTestEl.appendChild(div);
+        });
+        
+        // Test product card creation
+        function createProductCard(product, index) {
+            const card = document.createElement('div');
+            card.className = 'product-card';
+            card.setAttribute('data-id', product.id || product.name.toLowerCase().replace(/[^a-z0-9]+/g, '-'));
+            card.setAttribute('data-name', product.name);
+            card.setAttribute('data-price', product.price);
+            card.setAttribute('data-sku', product.sku || `TEEMA-${product.name.toUpperCase().replace(/[^A-Z0-9]+/g, '-')}`);
+            
+            const img = document.createElement('img');
+            img.loading = 'lazy';
+            img.src = product.image || 'https://via.placeholder.com/240';
+            img.alt = product.name;
+            
+            const title = document.createElement('h3');
+            title.textContent = product.name;
+            
+            const priceEl = document.createElement('div');
+            priceEl.className = 'price';
+            priceEl.textContent = formatNGN_new(product.price);
+            
+            const btn = document.createElement('button');
+            btn.className = 'add-to-cart';
+            btn.textContent = 'Add to Cart';
+            
+            card.appendChild(img);
+            card.appendChild(title);
+            card.appendChild(priceEl);
+            card.appendChild(btn);
+            
+            return card;
+        }
+        
+        // Render product cards
+        const productCardsEl = document.getElementById('product-cards');
+        testPrices.forEach((product, index) => {
+            const card = createProductCard(product, index);
+            productCardsEl.appendChild(card);
+        });
+        
+        console.log('Price display test completed');
+    </script>
+</body>
+</html>

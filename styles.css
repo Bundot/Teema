@@ -1572,3 +1572,59 @@ section {
 	color: white;
 	border-color: #0f172a;
 }
+
+/* =====================
+   SKELETON LOADERS
+   ===================== */
+@keyframes shimmer {
+	0% {
+		background-position: -200% 0;
+	}
+	100% {
+		background-position: 200% 0;
+	}
+}
+
+.skeleton {
+	animation: shimmer 1.5s infinite linear;
+	background: linear-gradient(90deg, #f1f5f9 25%, #e2e8f0 50%, #f1f5f9 75%);
+	background-size: 200% 100%;
+	border-radius: 8px;
+	pointer-events: none;
+}
+
+.skeleton-card {
+	display: flex;
+	flex-direction: column;
+	background: var(--bg-card);
+	border-radius: 16px;
+	padding: 16px;
+	gap: 12px;
+	border: 1px solid rgba(0, 0, 0, 0.03);
+}
+
+.skeleton-img {
+	width: 100%;
+	height: 180px;
+	border-radius: 12px;
+	margin-bottom: 8px;
+}
+
+.skeleton-title {
+	height: 20px;
+	width: 80%;
+	border-radius: 4px;
+}
+
+.skeleton-price {
+	height: 24px;
+	width: 40%;
+	border-radius: 4px;
+}
+
+.skeleton-btn {
+	height: 48px;
+	width: 100%;
+	border-radius: 12px;
+	margin-top: auto;
+}
