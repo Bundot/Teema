@@ -54,13 +54,25 @@
       </div>
     </div>
 
-    <!-- Category filters -->
-    <div class="category-filters container fade-in">
-      <button class="filter-btn active">All</button>
-      <button class="filter-btn">Grains & Flours</button>
-      <button class="filter-btn">Proteins</button>
-      <button class="filter-btn">Snacks & Spices</button>
-      <button class="filter-btn">Drinks</button>
+    <!-- Shop Controls (Search & Filters) -->
+    <div class="shop-controls container fade-in">
+      <!-- Search Bar -->
+      <div class="search-container">
+        <input type="text" id="product-search" placeholder="Search for products, ingredients, or snacks..." autocomplete="off">
+        <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
+          <circle cx="11" cy="11" r="8"></circle>
+          <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+        </svg>
+      </div>
+
+      <!-- Category filters -->
+      <div class="category-filters" style="margin-bottom: 0;">
+        <button class="filter-btn active" data-category="all">All</button>
+        <button class="filter-btn" data-category="grains & flours">Grains & Flours</button>
+        <button class="filter-btn" data-category="proteins">Proteins</button>
+        <button class="filter-btn" data-category="snacks & spices">Snacks & Spices</button>
+        <button class="filter-btn" data-category="drinks">Drinks</button>
+      </div>
     </div>
 
     <section class="chef fade-in container" id="products">

@@ -416,12 +416,16 @@
 
             // Background update callback
             const handleUpdate = (products) => {
-                container.innerHTML = '';
                 if (!products || products.length === 0) {
+                    container.innerHTML = '';
                     renderEmptyState(container, 'products');
                     return;
                 }
-                products.forEach((p, i) => container.appendChild(createProductCard(mapDbToProduct(p), i)));
+                
+                // Map the rows and store globally for filters
+                activeProductsList = products.map(p => mapDbToProduct(p));
+                renderFilteredProducts();
+                setupSearchAndFilterListeners();
             };
 
             if (window.TeemaProducts) {
@@ -473,8 +477,14 @@
                 const inline = document.getElementById('products-json');
                 if (inline && inline.textContent.trim()) {
                     const data = JSON.parse(inline.textContent.trim()).slice(0, limit);
-                    container.innerHTML = '';
-                    data.forEach((p, i) => container.appendChild(createProductCard(p, i)));
+                    if (container.id === 'products-grid') {
+                        activeProductsList = data;
+                        renderFilteredProducts();
+                        setupSearchAndFilterListeners();
+                    } else {
+                        container.innerHTML = '';
+                        data.forEach((p, i) => container.appendChild(createProductCard(p, i)));
+                    }
                     return;
                 }
             } catch (e) { console.warn('Fallback inline JSON failed', e); }
@@ -492,6 +502,10 @@
             };
         }
         
+        let activeProductsList = [];
+        let currentCategory = 'all';
+        let currentSearchQuery = '';
+
         // Function to render products from dynamically loaded data
         window.renderProductsFromData = function(products) {
             const container = document.getElementById('products-grid');
@@ -499,20 +513,80 @@
             
             console.log('Rendering products from database data:', products.length, 'items');
             
-            // Clear existing products
-            container.innerHTML = '';
+            // Store globally for search and filter functionality
+            activeProductsList = products;
+            renderFilteredProducts();
             
-            // Render each product
-            products.forEach((product, index) => {
-                const card = createProductCard(product, index);
-                container.appendChild(card);
-            });
+            // Setup listeners if not already setup
+            setupSearchAndFilterListeners();
             
             // Update cart badge
             updateCartBadge();
             
             console.log('Successfully rendered', products.length, 'products');
         };
+
+        function renderFilteredProducts() {
+            const container = document.getElementById('products-grid');
+            if (!container) return;
+            
+            container.innerHTML = '';
+            
+            let filtered = activeProductsList;
+            
+            // Filter by search query
+            if (currentSearchQuery) {
+                const q = currentSearchQuery.toLowerCase();
+                filtered = filtered.filter(p => p.name.toLowerCase().includes(q) || (p.sku && p.sku.toLowerCase().includes(q)));
+            }
+            
+            // Basic keyword-based categories since there is no native cat field
+            if (currentCategory !== 'all') {
+                const catLower = currentCategory;
+                filtered = filtered.filter(p => {
+                    const name = p.name.toLowerCase();
+                    if (catLower.includes('grain') || catLower.includes('flour')) return name.includes('rice') || name.includes('flour') || name.includes('garri') || name.includes('semovita') || name.includes('poundo y') || name.includes('yam') || name.includes('bean');
+                    if (catLower.includes('protein')) return name.includes('beef') || name.includes('chicken') || name.includes('fish') || name.includes('goat') || name.includes('gizzard') || name.includes('crayfish') || name.includes('kpomo') || name.includes('meat');
+                    if (catLower.includes('drink')) return name.includes('wine') || name.includes('malt') || name.includes('lacasera') || name.includes('fayrouz') || name.includes('milk');
+                    if (catLower.includes('snack') || catLower.includes('spice')) return name.includes('chinchin') || name.includes('tomtom') || name.includes('vicks') || name.includes('pepper') || name.includes('paste') || name.includes('oil') || name.includes('iru');
+                    return true;
+                });
+            }
+            
+            // Render the items
+            if (filtered.length === 0) {
+                container.innerHTML = '<div class="no-results"><div class="no-results-icon">🔍</div><h3>No matching products found</h3><p>Try adjusting your search or filter.</p></div>';
+            } else {
+                filtered.forEach((product, index) => {
+                    const card = createProductCard(product, index);
+                    container.appendChild(card);
+                });
+            }
+        }
+        
+        let searchListenersAttached = false;
+        function setupSearchAndFilterListeners() {
+            if (searchListenersAttached) return;
+            searchListenersAttached = true;
+            
+            const searchInput = document.getElementById('product-search');
+            if (searchInput) {
+                searchInput.addEventListener('input', (e) => {
+                    currentSearchQuery = e.target.value.trim();
+                    renderFilteredProducts();
+                });
+            }
+            
+            const filterBtns = document.querySelectorAll('.filter-btn');
+            filterBtns.forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    filterBtns.forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                    currentCategory = btn.dataset.category || btn.textContent.toLowerCase();
+                    renderFilteredProducts();
+                });
+            });
+        }
 
         function createComboCard(c) {
             const card = document.createElement('div');
