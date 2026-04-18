@@ -1535,6 +1535,54 @@ section {
 	margin: 0 auto;
 }
 
+.shop-controls {
+	display: flex;
+	flex-direction: column;
+	gap: 16px;
+	margin-bottom: 24px;
+}
+
+.search-container {
+	position: relative;
+	width: 100%;
+	max-width: 600px;
+	margin: 0 auto;
+	z-index: 10;
+}
+
+.search-container input {
+	width: 100%;
+	padding: 14px 20px 14px 48px;
+	border-radius: 30px;
+	border: 1px solid #e2e8f0;
+	font-family: 'Poppins', sans-serif;
+	font-size: 16px;
+	background: #fff;
+	color: #0f172a;
+	transition: all 0.3s ease;
+	box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+	outline: none;
+}
+
+.search-container input:focus {
+	border-color: #f59e0b;
+	box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.2);
+}
+
+.search-container svg {
+	position: absolute;
+	left: 18px;
+	top: 50%;
+	transform: translateY(-50%);
+	color: #94a3b8;
+	pointer-events: none;
+	transition: color 0.3s ease;
+}
+
+.search-container input:focus + svg {
+	color: #f59e0b;
+}
+
 .category-filters {
 	display: flex;
 	gap: 12px;

@@ -16,26 +16,31 @@
         if (supabaseClient) return supabaseClient;
         
         try {
-            // Try to use global supabase if available
-            if (window.supabase) {
-                supabaseClient = window.supabase;
+            // Re-use an already instantiated client if available globally under TEEMA_DB_CLIENT
+            if (window.TEEMA_DB_CLIENT) {
+                supabaseClient = window.TEEMA_DB_CLIENT;
                 return supabaseClient;
             }
             
-            // Initialize from environment
-            const { createClient } = window.supabaseJs || {};
-            if (!createClient) {
-                console.warn('Supabase client not available');
+            // Get the library module
+            const SupabaseLib = window.supabase || window.supabaseJs;
+            if (!SupabaseLib || !SupabaseLib.createClient) {
+                console.warn('Supabase library not available');
                 return null;
             }
             
+            // Check for configuration either in TEEMA_CONFIG or window global
             const config = window.TEEMA_CONFIG || {};
-            if (!config.SUPABASE_URL || !config.SUPABASE_ANON) {
+            const url = config.SUPABASE_URL || window.SUPABASE_URL;
+            const anonKey = config.SUPABASE_ANON || window.SUPABASE_ANON;
+            
+            if (!url || !anonKey) {
                 console.warn('Supabase configuration missing');
                 return null;
             }
             
-            supabaseClient = createClient(config.SUPABASE_URL, config.SUPABASE_ANON);
+            supabaseClient = SupabaseLib.createClient(url, anonKey);
+            window.TEEMA_DB_CLIENT = supabaseClient; // cache globally
             return supabaseClient;
         } catch (error) {
             console.error('Error initializing Supabase:', error);
@@ -97,7 +102,7 @@
                 .select('id, name, price, image_url, sku, active')
                 .eq('active', true) // Only fetch active products
                 .order('name', { ascending: true })
-                .limit(100); // Reasonable limit for performance
+                .limit(1000); // Increased limit to ensure all products load
             
             if (error) {
                 throw error;
