@@ -236,11 +236,12 @@ async function uploadAllProducts() {
     }
   }
   
-  // Step 2: Find TeemaProducts directory
-  const teemaProductsDir = path.resolve(__dirname, '..', 'TeemaProducts');
+  // Step 2: Find Target directory
+  const targetDirName = process.env.TARGET_DIR || 'TeemaProducts';
+  const teemaProductsDir = path.resolve(__dirname, '..', targetDirName);
   
   if (!fs.existsSync(teemaProductsDir)) {
-    console.error(`TeemaProducts directory not found at: ${teemaProductsDir}`);
+    console.error(`Target directory not found at: ${teemaProductsDir}`);
     process.exit(1);
   }
   
